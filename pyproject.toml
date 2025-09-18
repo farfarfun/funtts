@@ -1,0 +1,52 @@
+[build-system]
+requires = [ "setuptools>=61.0", "wheel",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "funtts"
+version = "0.1.1"
+description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
+readme = "README.md"
+keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
+classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.8", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Topic :: Multimedia :: Sound/Audio :: Speech", "Topic :: Software Development :: Libraries :: Python Modules",]
+requires-python = ">=3.8"
+dependencies = [ "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0",]
+[[project.authors]]
+name = "牛哥"
+email = "niuliangtao@qq.com"
+
+[[project.authors]]
+name = "farfarfun"
+email = "farfarfun@qq.com"
+
+[[project.maintainers]]
+name = "牛哥"
+email = "niuliangtao@qq.com"
+
+[[project.maintainers]]
+name = "farfarfun"
+email = "farfarfun@qq.com"
+
+[project.license]
+text = "MIT"
+
+[project.optional-dependencies]
+edge = [ "edge-tts>=6.1.0",]
+azure = [ "azure-cognitiveservices-speech>=1.30.0",]
+espeak = []
+pyttsx3 = [ "pyttsx3>=2.90",]
+ll = [ "funtts[edge,azure,pyttsx3,audio]",]
+
+[project.urls]
+Organization = "https://github.com/farfarfun"
+Repository = "https://github.com/farfarfun/funtts"
+Releases = "https://github.com/farfarfun/funtts/releases"
+
+[project.scripts]
+funtts = "funtts.cli:main"
+
+[tool.setuptools]
+license-files = []
+
+[tool.setuptools.packages.find]
+where = [ "src",]
