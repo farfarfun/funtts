@@ -1012,6 +1012,42 @@ wheels = [
 ]
 
 [[package]]
+name = "farfun-tts"
+version = "0.1.3"
+source = { editable = "." }
+dependencies = [
+    { name = "ffmpeg-python" },
+    { name = "funutil" },
+    { name = "pydub" },
+]
+
+[package.optional-dependencies]
+azure = [
+    { name = "azure-cognitiveservices-speech" },
+]
+edge = [
+    { name = "edge-tts" },
+]
+ll = [
+    { name = "funtts" },
+]
+pyttsx3 = [
+    { name = "pyttsx3" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "azure-cognitiveservices-speech", marker = "extra == 'azure'", specifier = ">=1.30.0" },
+    { name = "edge-tts", marker = "extra == 'edge'", specifier = ">=6.1.0" },
+    { name = "ffmpeg-python", specifier = ">=0.2.0" },
+    { name = "funtts", extras = ["edge", "azure", "pyttsx3", "audio"], marker = "extra == 'll'" },
+    { name = "funutil", specifier = ">=0.1.0" },
+    { name = "pydub", specifier = ">=0.25.0" },
+    { name = "pyttsx3", marker = "extra == 'pyttsx3'", specifier = ">=2.90" },
+]
+provides-extras = ["edge", "azure", "espeak", "pyttsx3", "ll"]
+
+[[package]]
 name = "ffmpeg-python"
 version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1250,42 +1286,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/45/827d86ee475c877f5f766fbc23fb6acb6fada9e52f1c9720e2ba3eae32da/frozenlist-1.7.0-cp39-cp39-win_amd64.whl", hash = "sha256:43a82fce6769c70f2f5a06248b614a7d268080a9d20f7457ef10ecee5af82b63", size = 44102, upload-time = "2025-06-09T23:02:32.808Z" },
     { url = "https://files.pythonhosted.org/packages/ee/45/b82e3c16be2182bff01179db177fe144d58b5dc787a7d4492c6ed8b9317f/frozenlist-1.7.0-py3-none-any.whl", hash = "sha256:9a5af342e34f7e97caf8c995864c7a396418ae2859cc6fdf1b1073020d516a7e", size = 13106, upload-time = "2025-06-09T23:02:34.204Z" },
 ]
-
-[[package]]
-name = "fun-tts"
-version = "0.1.2"
-source = { editable = "." }
-dependencies = [
-    { name = "ffmpeg-python" },
-    { name = "funutil" },
-    { name = "pydub" },
-]
-
-[package.optional-dependencies]
-azure = [
-    { name = "azure-cognitiveservices-speech" },
-]
-edge = [
-    { name = "edge-tts" },
-]
-ll = [
-    { name = "funtts" },
-]
-pyttsx3 = [
-    { name = "pyttsx3" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "azure-cognitiveservices-speech", marker = "extra == 'azure'", specifier = ">=1.30.0" },
-    { name = "edge-tts", marker = "extra == 'edge'", specifier = ">=6.1.0" },
-    { name = "ffmpeg-python", specifier = ">=0.2.0" },
-    { name = "funtts", extras = ["edge", "azure", "pyttsx3", "audio"], marker = "extra == 'll'" },
-    { name = "funutil", specifier = ">=0.1.0" },
-    { name = "pydub", specifier = ">=0.25.0" },
-    { name = "pyttsx3", marker = "extra == 'pyttsx3'", specifier = ">=2.90" },
-]
-provides-extras = ["edge", "azure", "espeak", "pyttsx3", "ll"]
 
 [[package]]
 name = "funtts"

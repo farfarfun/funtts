@@ -3,8 +3,8 @@ requires = [ "setuptools>=61.0", "wheel",]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fun-tts"
-version = "0.1.2"
+name = "farfun-tts"
+version = "0.1.3"
 description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
 readme = "README.md"
 keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
@@ -35,7 +35,7 @@ edge = [ "edge-tts>=6.1.0",]
 azure = [ "azure-cognitiveservices-speech>=1.30.0",]
 espeak = []
 pyttsx3 = [ "pyttsx3>=2.90",]
-ll = [ "funtts[edge,azure,pyttsx3,audio]",]
+ll = [ "farfun-tts[edge,azure,pyttsx3,audio]",]
 
 [project.urls]
 Organization = "https://github.com/farfarfun"
