@@ -30,7 +30,7 @@ def convert_rate_to_percent(rate: float) -> str:
 class EdgeTTS(BaseTTS):
     """
     Microsoft Edge TTS引擎
-    
+
     特性:
     - 免费使用，无需API密钥
     - 高质量神经网络语音
@@ -38,15 +38,15 @@ class EdgeTTS(BaseTTS):
     - 支持SSML标记
     - 自动生成时间同步字幕
     - 支持语音速率调节
-    
+
     依赖:
     - edge-tts: >=6.1.0
     """
-    
+
     def __init__(self, voice_name: str = "zh-CN-XiaoxiaoNeural", **kwargs):
         """
         初始化Edge TTS引擎
-        
+
         Args:
             voice_name: 默认语音名称
             **kwargs: 其他配置参数
@@ -57,10 +57,10 @@ class EdgeTTS(BaseTTS):
     def synthesize(self, request: TTSRequest) -> TTSResponse:
         """
         语音合成实现
-        
+
         Args:
             request: TTS请求对象
-            
+
         Returns:
             TTSResponse: TTS响应对象
         """
@@ -71,32 +71,32 @@ class EdgeTTS(BaseTTS):
                     success=False,
                     request=request,
                     error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST"
+                    error_code="INVALID_REQUEST",
                 )
-                
+
             # 语音检查
             voice_name = request.voice_name or self.default_voice
             if not self.is_voice_available(voice_name):
                 logger.warning(f"语音可能不可用: {voice_name}，尝试继续合成")
-                
+
             return self._synthesize(request)
-            
+
         except ImportError as e:
             logger.error(f"Edge TTS依赖包未安装: {e}")
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message=f"缺少依赖包: pip install edge-tts",
-                error_code="MISSING_DEPENDENCY"
+                error_code="MISSING_DEPENDENCY",
             )
-            
+
         except Exception as e:
             logger.error(f"Edge TTS语音合成失败: {e}")
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message=str(e),
-                error_code="SYNTHESIS_ERROR"
+                error_code="SYNTHESIS_ERROR",
             )
 
     @retry(4)
@@ -108,12 +108,13 @@ class EdgeTTS(BaseTTS):
 
         if not voice_file:
             import tempfile
+
             voice_file = tempfile.mktemp(suffix=f".{request.output_format}")
 
         try:
             from edge_tts import Communicate
             from edge_tts import SubMaker as EdgeSubMaker
-            
+
             rate_str = convert_rate_to_percent(request.voice_rate)
             voice_name = request.voice_name or self.default_voice
             communicate = Communicate(text, voice_name, rate=rate_str)
@@ -172,16 +173,16 @@ class EdgeTTS(BaseTTS):
     def list_voices(self, language: Optional[str] = None) -> List[VoiceInfo]:
         """
         获取可用语音列表
-        
+
         Args:
             language: 语言代码过滤（如 'zh-CN'）
-            
+
         Returns:
             List[VoiceInfo]: 语音信息列表
         """
         try:
             from edge_tts import list_voices
-            
+
             voice_list = asyncio.run(list_voices())
             result = []
 
@@ -206,10 +207,10 @@ class EdgeTTS(BaseTTS):
     def is_voice_available(self, voice_name: str) -> bool:
         """
         检查语音是否可用
-        
+
         Args:
             voice_name: 语音名称
-            
+
         Returns:
             bool: 是否可用
         """
@@ -225,11 +226,11 @@ class EdgeTTS(BaseTTS):
         if not request.text or not request.text.strip():
             logger.error("文本内容为空")
             return False
-            
+
         if len(request.text) > 10000:
             logger.error(f"文本长度超出限制: {len(request.text)} > 10000")
             return False
-            
+
         return True
 
     def _create_voice_info(self, voice_data: dict) -> VoiceInfo:
@@ -285,6 +286,7 @@ class EdgeTTS(BaseTTS):
         # 估算时长
         try:
             import os
+
             file_size = os.path.getsize(audio_file)
             # MP3文件大约16KB/s (24kHz)
             return file_size / 16000

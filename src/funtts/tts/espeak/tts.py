@@ -19,7 +19,7 @@ logger = getLogger("funtts.tts.espeak")
 class EspeakTTS(BaseTTS):
     """
     eSpeak开源TTS引擎
-    
+
     特性:
     - 完全免费开源
     - 支持100+种语言
@@ -27,15 +27,15 @@ class EspeakTTS(BaseTTS):
     - 支持SSML部分功能
     - 跨平台支持
     - 可调节语音参数
-    
+
     依赖:
     - eSpeak系统程序
     """
-    
+
     def __init__(self, voice_name: str = "zh", **kwargs):
         """
         初始化eSpeak TTS引擎
-        
+
         Args:
             voice_name: 默认语音名称（语言代码）
             **kwargs: 其他配置参数，包括:
@@ -43,7 +43,7 @@ class EspeakTTS(BaseTTS):
         """
         super().__init__(voice_name, **kwargs)
         self.espeak_path = kwargs.get("espeak_path", "espeak")
-        
+
         # 检查eSpeak是否可用
         if self._check_espeak_available():
             logger.info(f"eSpeak TTS引擎初始化完成，默认语音: {voice_name}")
@@ -53,10 +53,10 @@ class EspeakTTS(BaseTTS):
     def synthesize(self, request: TTSRequest) -> TTSResponse:
         """
         语音合成实现
-        
+
         Args:
             request: TTS请求对象
-            
+
         Returns:
             TTSResponse: TTS响应对象
         """
@@ -67,74 +67,81 @@ class EspeakTTS(BaseTTS):
                     success=False,
                     request=request,
                     error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST"
+                    error_code="INVALID_REQUEST",
                 )
-            
+
             # 检查eSpeak可用性
             if not self._check_espeak_available():
                 return TTSResponse(
                     success=False,
                     request=request,
                     error_message="eSpeak程序不可用，请安装eSpeak",
-                    error_code="MISSING_DEPENDENCY"
+                    error_code="MISSING_DEPENDENCY",
                 )
-                
+
             return self._synthesize(request)
-            
+
         except Exception as e:
             logger.error(f"eSpeak TTS语音合成失败: {e}")
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message=str(e),
-                error_code="SYNTHESIS_ERROR"
+                error_code="SYNTHESIS_ERROR",
             )
 
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """eSpeak TTS语音合成核心方法"""
         start_time = time.time()
-        
+
         try:
             voice_name = request.voice_name or self.default_voice
-            
+
             # 构建eSpeak命令
             cmd = [
                 self.espeak_path,
-                "-v", voice_name,  # 语音/语言
-                "-s", str(int(150 * request.voice_rate)),  # 语音速度 (words per minute)
-                "-w", request.output_file,  # 输出文件
-                request.text  # 要合成的文本
+                "-v",
+                voice_name,  # 语音/语言
+                "-s",
+                str(int(150 * request.voice_rate)),  # 语音速度 (words per minute)
+                "-w",
+                request.output_file,  # 输出文件
+                request.text,  # 要合成的文本
             ]
-            
+
             # 如果需要调整音调
-            if hasattr(request, 'voice_pitch') and request.voice_pitch != 1.0:
+            if hasattr(request, "voice_pitch") and request.voice_pitch != 1.0:
                 pitch = int(50 * request.voice_pitch)  # eSpeak音调范围0-99
                 pitch = max(0, min(99, pitch))
                 cmd.extend(["-p", str(pitch)])
-            
+
             # 如果需要调整音量
-            if hasattr(request, 'voice_volume') and request.voice_volume != 1.0:
+            if hasattr(request, "voice_volume") and request.voice_volume != 1.0:
                 volume = int(100 * request.voice_volume)  # eSpeak音量范围0-200
                 volume = max(0, min(200, volume))
                 cmd.extend(["-a", str(volume)])
-            
-            logger.info(f"开始eSpeak合成: voice={voice_name}, rate={request.voice_rate}")
+
+            logger.info(
+                f"开始eSpeak合成: voice={voice_name}, rate={request.voice_rate}"
+            )
             logger.debug(f"eSpeak命令: {' '.join(cmd)}")
-            
+
             # 执行eSpeak命令
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=30  # 30秒超时
+                timeout=30,  # 30秒超时
             )
-            
+
             if result.returncode == 0:
                 # 获取音频时长
                 duration = self._get_audio_duration(request.output_file)
-                
-                logger.success(f"eSpeak合成完成: {request.output_file}, 时长: {duration:.2f}s")
-                
+
+                logger.success(
+                    f"eSpeak合成完成: {request.output_file}, 时长: {duration:.2f}s"
+                )
+
                 return TTSResponse(
                     success=True,
                     request=request,
@@ -154,7 +161,7 @@ class EspeakTTS(BaseTTS):
                     error_code="ESPEAK_ERROR",
                     processing_time=time.time() - start_time,
                 )
-                
+
         except subprocess.TimeoutExpired:
             error_msg = "eSpeak执行超时"
             logger.error(error_msg)
@@ -178,10 +185,10 @@ class EspeakTTS(BaseTTS):
     def list_voices(self, language: Optional[str] = None) -> List[VoiceInfo]:
         """
         获取可用语音列表
-        
+
         Args:
             language: 语言代码过滤（如 'zh', 'en'）
-            
+
         Returns:
             List[VoiceInfo]: 语音信息列表
         """
@@ -189,41 +196,43 @@ class EspeakTTS(BaseTTS):
             if not self._check_espeak_available():
                 logger.warning("eSpeak不可用，返回预定义语音列表")
                 return self._get_predefined_voices(language)
-            
+
             # 获取eSpeak语音列表
             result = subprocess.run(
                 [self.espeak_path, "--voices"],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
-            
+
             if result.returncode == 0:
                 voices = []
-                lines = result.stdout.strip().split('\n')[1:]  # 跳过标题行
-                
+                lines = result.stdout.strip().split("\n")[1:]  # 跳过标题行
+
                 for line in lines:
                     if not line.strip():
                         continue
-                    
+
                     parts = line.split()
                     if len(parts) >= 4:
                         lang_code = parts[1]
                         voice_name = parts[3]
-                        
+
                         # 语言过滤
                         if language and not lang_code.startswith(language):
                             continue
-                        
-                        voice_info = self._create_voice_info(lang_code, voice_name, parts)
+
+                        voice_info = self._create_voice_info(
+                            lang_code, voice_name, parts
+                        )
                         voices.append(voice_info)
-                
+
                 logger.info(f"获取到 {len(voices)} 个eSpeak语音")
                 return voices
             else:
                 logger.warning("获取eSpeak语音列表失败，返回预定义列表")
                 return self._get_predefined_voices(language)
-                
+
         except Exception as e:
             logger.error(f"获取eSpeak语音列表失败: {e}")
             return self._get_predefined_voices(language)
@@ -231,10 +240,10 @@ class EspeakTTS(BaseTTS):
     def is_voice_available(self, voice_name: str) -> bool:
         """
         检查语音是否可用
-        
+
         Args:
             voice_name: 语音名称
-            
+
         Returns:
             bool: 是否可用
         """
@@ -250,11 +259,11 @@ class EspeakTTS(BaseTTS):
         if not request.text or not request.text.strip():
             logger.error("文本内容为空")
             return False
-            
+
         if len(request.text) > 10000:  # eSpeak建议限制
             logger.error(f"文本长度超出建议限制: {len(request.text)} > 10000")
             return False
-            
+
         return True
 
     def _check_espeak_available(self) -> bool:
@@ -264,27 +273,29 @@ class EspeakTTS(BaseTTS):
                 [self.espeak_path, "--version"],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
             )
             return result.returncode == 0
         except Exception:
             return False
 
-    def _create_voice_info(self, lang_code: str, voice_name: str, parts: List[str]) -> VoiceInfo:
+    def _create_voice_info(
+        self, lang_code: str, voice_name: str, parts: List[str]
+    ) -> VoiceInfo:
         """创建VoiceInfo对象"""
         # eSpeak语音信息格式：Pty Language Age/Gender VoiceName File Other
         age_gender = parts[2] if len(parts) > 2 else ""
         gender = "unknown"
         age = "adult"
-        
+
         if "M" in age_gender:
             gender = "male"
         elif "F" in age_gender:
             gender = "female"
-        
+
         if "child" in age_gender.lower():
             age = "child"
-        
+
         return VoiceInfo(
             name=lang_code,  # eSpeak使用语言代码作为语音名称
             display_name=voice_name,
@@ -319,12 +330,12 @@ class EspeakTTS(BaseTTS):
             ("ja", "日本語", "ja", "female"),
             ("ko", "한국어", "ko", "female"),
         ]
-        
+
         result = []
         for lang_code, display_name, language_code, gender in predefined_voices:
             if language and not lang_code.startswith(language):
                 continue
-                
+
             voice_info = VoiceInfo(
                 name=lang_code,
                 display_name=display_name,
@@ -339,28 +350,38 @@ class EspeakTTS(BaseTTS):
                 supported_formats=["wav"],
             )
             result.append(voice_info)
-        
+
         return result
 
     def _get_audio_duration(self, audio_file: str) -> float:
         """获取音频文件时长"""
         try:
             import subprocess
+
             result = subprocess.run(
                 [
-                    "ffprobe", "-v", "quiet", "-show_entries", "format=duration",
-                    "-of", "csv=p=0", audio_file
+                    "ffprobe",
+                    "-v",
+                    "quiet",
+                    "-show_entries",
+                    "format=duration",
+                    "-of",
+                    "csv=p=0",
+                    audio_file,
                 ],
-                capture_output=True, text=True, timeout=10
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
                 return float(result.stdout.strip())
         except Exception:
             pass
-        
+
         # 估算时长
         try:
             import os
+
             file_size = os.path.getsize(audio_file)
             # WAV文件大约44KB/s (22kHz 16-bit)
             return file_size / 44100
@@ -375,13 +396,13 @@ class EspeakTTS(BaseTTS):
                 [self.espeak_path, "--version"],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
             )
             if result.returncode == 0:
-                version = result.stdout.strip().split('\n')[0]
+                version = result.stdout.strip().split("\n")[0]
         except Exception:
             pass
-        
+
         return {
             "engine": "espeak",
             "version": version,

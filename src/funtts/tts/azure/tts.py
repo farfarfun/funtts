@@ -18,7 +18,7 @@ logger = getLogger("funtts.tts.azure")
 class AzureTTS(BaseTTS):
     """
     Microsoft Azure认知服务TTS引擎
-    
+
     特性:
     - 企业级高质量语音合成
     - 支持SSML和自定义语音
@@ -26,15 +26,15 @@ class AzureTTS(BaseTTS):
     - 支持语音情感和风格调节
     - 支持批量处理和流式合成
     - 可自定义语音模型
-    
+
     依赖:
     - azure-cognitiveservices-speech: >=1.30.0
     """
-    
+
     def __init__(self, voice_name: str = "zh-CN-XiaoxiaoNeural", **kwargs):
         """
         初始化Azure TTS引擎
-        
+
         Args:
             voice_name: 默认语音名称
             **kwargs: 其他配置参数，包括:
@@ -43,20 +43,24 @@ class AzureTTS(BaseTTS):
         """
         super().__init__(voice_name, **kwargs)
         self.speech_key = kwargs.get("speech_key") or os.getenv("AZURE_SPEECH_KEY", "")
-        self.service_region = kwargs.get("service_region") or os.getenv("AZURE_SPEECH_REGION", "")
-        
+        self.service_region = kwargs.get("service_region") or os.getenv(
+            "AZURE_SPEECH_REGION", ""
+        )
+
         if not self.speech_key or not self.service_region:
-            logger.warning("Azure语音服务密钥或区域未配置，请设置AZURE_SPEECH_KEY和AZURE_SPEECH_REGION环境变量")
+            logger.warning(
+                "Azure语音服务密钥或区域未配置，请设置AZURE_SPEECH_KEY和AZURE_SPEECH_REGION环境变量"
+            )
         else:
             logger.info(f"Azure TTS引擎初始化完成，区域: {self.service_region}")
 
     def synthesize(self, request: TTSRequest) -> TTSResponse:
         """
         语音合成实现
-        
+
         Args:
             request: TTS请求对象
-            
+
         Returns:
             TTSResponse: TTS响应对象
         """
@@ -67,69 +71,69 @@ class AzureTTS(BaseTTS):
                     success=False,
                     request=request,
                     error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST"
+                    error_code="INVALID_REQUEST",
                 )
-            
+
             # 检查Azure配置
             if not self.speech_key or not self.service_region:
                 return TTSResponse(
                     success=False,
                     request=request,
                     error_message="Azure语音服务未配置，请设置speech_key和service_region",
-                    error_code="MISSING_CREDENTIALS"
+                    error_code="MISSING_CREDENTIALS",
                 )
-                
+
             return self._synthesize(request)
-            
+
         except ImportError as e:
             logger.error(f"Azure SDK未安装: {e}")
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message="缺少依赖包: pip install azure-cognitiveservices-speech",
-                error_code="MISSING_DEPENDENCY"
+                error_code="MISSING_DEPENDENCY",
             )
-            
+
         except Exception as e:
             logger.error(f"Azure TTS语音合成失败: {e}")
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message=str(e),
-                error_code="SYNTHESIS_ERROR"
+                error_code="SYNTHESIS_ERROR",
             )
 
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """Azure TTS语音合成核心方法"""
         start_time = time.time()
-        
+
         try:
             import azure.cognitiveservices.speech as speechsdk
-            
+
             # 配置语音服务
             speech_config = speechsdk.SpeechConfig(
-                subscription=self.speech_key,
-                region=self.service_region
+                subscription=self.speech_key, region=self.service_region
             )
-            
+
             voice_name = request.voice_name or self.default_voice
             speech_config.speech_synthesis_voice_name = voice_name
-            
+
             # 设置输出格式
             if request.output_format.lower() == "wav":
                 speech_config.set_speech_synthesis_output_format(
                     speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm
                 )
-            
+
             # 配置音频输出
-            audio_config = speechsdk.audio.AudioOutputConfig(filename=request.output_file)
-            
+            audio_config = speechsdk.audio.AudioOutputConfig(
+                filename=request.output_file
+            )
+
             # 创建合成器
             synthesizer = speechsdk.SpeechSynthesizer(
-                speech_config=speech_config,
-                audio_config=audio_config
+                speech_config=speech_config, audio_config=audio_config
             )
-            
+
             # 构建SSML（如果需要调整语音速率）
             if request.voice_rate != 1.0:
                 rate_percent = f"{int((request.voice_rate - 1.0) * 100):+d}%"
@@ -147,27 +151,33 @@ class AzureTTS(BaseTTS):
             else:
                 text_to_speak = request.text
                 is_ssml = False
-            
-            logger.info(f"开始Azure TTS合成: voice={voice_name}, rate={request.voice_rate}")
-            
+
+            logger.info(
+                f"开始Azure TTS合成: voice={voice_name}, rate={request.voice_rate}"
+            )
+
             # 执行合成
             if is_ssml:
                 result = synthesizer.speak_ssml_async(text_to_speak).get()
             else:
                 result = synthesizer.speak_text_async(text_to_speak).get()
-            
+
             # 检查结果
             if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
                 # 获取音频时长
                 duration = self._get_audio_duration(request.output_file)
-                
+
                 # 创建字幕（Azure TTS不直接提供时间戳，需要估算）
                 subtitle_maker = None
                 if request.generate_subtitles:
-                    subtitle_maker = self._create_subtitle_from_text(request.text, duration)
-                
-                logger.success(f"Azure TTS合成完成: {request.output_file}, 时长: {duration:.2f}s")
-                
+                    subtitle_maker = self._create_subtitle_from_text(
+                        request.text, duration
+                    )
+
+                logger.success(
+                    f"Azure TTS合成完成: {request.output_file}, 时长: {duration:.2f}s"
+                )
+
                 return TTSResponse(
                     success=True,
                     request=request,
@@ -178,13 +188,13 @@ class AzureTTS(BaseTTS):
                     processing_time=time.time() - start_time,
                     engine_info=self._get_engine_info(),
                 )
-                
+
             elif result.reason == speechsdk.ResultReason.Canceled:
                 cancellation_details = speechsdk.CancellationDetails(result)
                 error_msg = f"Azure TTS取消: {cancellation_details.reason}"
                 if cancellation_details.error_details:
                     error_msg += f", 详情: {cancellation_details.error_details}"
-                
+
                 logger.error(error_msg)
                 return TTSResponse(
                     success=False,
@@ -203,7 +213,7 @@ class AzureTTS(BaseTTS):
                     error_code="AZURE_ERROR",
                     processing_time=time.time() - start_time,
                 )
-                
+
         except Exception as e:
             logger.error(f"Azure TTS处理失败: {str(e)}")
             return TTSResponse(
@@ -217,47 +227,46 @@ class AzureTTS(BaseTTS):
     def list_voices(self, language: Optional[str] = None) -> List[VoiceInfo]:
         """
         获取可用语音列表
-        
+
         Args:
             language: 语言代码过滤（如 'zh-CN'）
-            
+
         Returns:
             List[VoiceInfo]: 语音信息列表
         """
         try:
             import azure.cognitiveservices.speech as speechsdk
-            
+
             if not self.speech_key or not self.service_region:
                 logger.warning("Azure配置不完整，返回预定义语音列表")
                 return self._get_predefined_voices(language)
-            
+
             # 配置语音服务
             speech_config = speechsdk.SpeechConfig(
-                subscription=self.speech_key,
-                region=self.service_region
+                subscription=self.speech_key, region=self.service_region
             )
-            
+
             # 创建合成器
             synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
-            
+
             # 获取语音列表
             voices_result = synthesizer.get_voices_async().get()
-            
+
             if voices_result.reason == speechsdk.ResultReason.VoicesListRetrieved:
                 result = []
                 for voice in voices_result.voices:
                     if language and not voice.locale.startswith(language):
                         continue
-                    
+
                     voice_info = self._create_voice_info_from_azure(voice)
                     result.append(voice_info)
-                
+
                 logger.info(f"获取到 {len(result)} 个Azure语音")
                 return result
             else:
                 logger.warning("获取Azure语音列表失败，返回预定义列表")
                 return self._get_predefined_voices(language)
-                
+
         except ImportError:
             logger.error("Azure SDK未安装，返回预定义语音列表")
             return self._get_predefined_voices(language)
@@ -268,10 +277,10 @@ class AzureTTS(BaseTTS):
     def is_voice_available(self, voice_name: str) -> bool:
         """
         检查语音是否可用
-        
+
         Args:
             voice_name: 语音名称
-            
+
         Returns:
             bool: 是否可用
         """
@@ -287,11 +296,11 @@ class AzureTTS(BaseTTS):
         if not request.text or not request.text.strip():
             logger.error("文本内容为空")
             return False
-            
+
         if len(request.text) > 50000:  # Azure限制更高
             logger.error(f"文本长度超出限制: {len(request.text)} > 50000")
             return False
-            
+
         return True
 
     def _create_voice_info_from_azure(self, azure_voice) -> VoiceInfo:
@@ -302,7 +311,9 @@ class AzureTTS(BaseTTS):
             language=azure_voice.locale.split("-")[0],
             locale=azure_voice.locale,
             gender=azure_voice.gender.name.lower() if azure_voice.gender else "unknown",
-            region=azure_voice.locale.split("-")[1] if "-" in azure_voice.locale else "unknown",
+            region=azure_voice.locale.split("-")[1]
+            if "-" in azure_voice.locale
+            else "unknown",
             engine="azure",
             sample_rate=24000,
             quality="premium",
@@ -310,9 +321,11 @@ class AzureTTS(BaseTTS):
             supports_ssml=True,
             supported_formats=["wav", "mp3"],
             engine_specific={
-                "voice_type": azure_voice.voice_type.name if azure_voice.voice_type else "Standard",
-                "style_list": getattr(azure_voice, 'style_list', []),
-                "role_play_list": getattr(azure_voice, 'role_play_list', []),
+                "voice_type": azure_voice.voice_type.name
+                if azure_voice.voice_type
+                else "Standard",
+                "style_list": getattr(azure_voice, "style_list", []),
+                "role_play_list": getattr(azure_voice, "role_play_list", []),
             },
         )
 
@@ -332,12 +345,12 @@ class AzureTTS(BaseTTS):
             ("en-GB-SoniaNeural", "Sonia", "en-GB", "female"),
             ("en-AU-NatashaNeural", "Natasha", "en-AU", "female"),
         ]
-        
+
         result = []
         for name, display_name, locale, gender in predefined_voices:
             if language and not locale.startswith(language):
                 continue
-                
+
             voice_info = VoiceInfo(
                 name=name,
                 display_name=display_name,
@@ -353,19 +366,19 @@ class AzureTTS(BaseTTS):
                 supported_formats=["wav", "mp3"],
             )
             result.append(voice_info)
-        
+
         return result
 
     def _create_subtitle_from_text(self, text: str, duration: float) -> SubtitleMaker:
         """从文本创建简单字幕（估算时间）"""
         subtitle_maker = SubtitleMaker()
-        
+
         # 简单的时间估算：假设平均语速
         words = text.split()
         if words:
             word_duration = duration / len(words)
             current_time = 0.0
-            
+
             for word in words:
                 start_time = current_time
                 end_time = current_time + word_duration
@@ -374,28 +387,38 @@ class AzureTTS(BaseTTS):
         else:
             # 如果没有词，整个文本作为一个片段
             subtitle_maker.add_segment(0.0, duration, text)
-        
+
         return subtitle_maker
 
     def _get_audio_duration(self, audio_file: str) -> float:
         """获取音频文件时长"""
         try:
             import subprocess
+
             result = subprocess.run(
                 [
-                    "ffprobe", "-v", "quiet", "-show_entries", "format=duration",
-                    "-of", "csv=p=0", audio_file
+                    "ffprobe",
+                    "-v",
+                    "quiet",
+                    "-show_entries",
+                    "format=duration",
+                    "-of",
+                    "csv=p=0",
+                    audio_file,
                 ],
-                capture_output=True, text=True, timeout=10
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
                 return float(result.stdout.strip())
         except Exception:
             pass
-        
+
         # 估算时长
         try:
             import os
+
             file_size = os.path.getsize(audio_file)
             # WAV文件大约48KB/s (24kHz 16-bit)
             return file_size / 48000

@@ -25,6 +25,33 @@ try:
 except ImportError:
     Pyttsx3TTS = None
 
+# Coqui TTS暂时注释掉，因为对Python版本有严格要求
+# try:
+#     from funtts.tts.coqui import CoquiTTS
+# except ImportError:
+#     CoquiTTS = None
+CoquiTTS = None
+
+try:
+    from funtts.tts.bark import BarkTTS
+except ImportError:
+    BarkTTS = None
+
+try:
+    from funtts.tts.tortoise import TortoiseTTS
+except ImportError:
+    TortoiseTTS = None
+
+try:
+    from funtts.tts.indextts2 import IndexTTS2
+except ImportError:
+    IndexTTS2 = None
+
+try:
+    from funtts.tts.kitten import KittenTTS
+except ImportError:
+    KittenTTS = None
+
 __all__ = [
     "BaseTTS",
     "TTSFactory",
@@ -35,6 +62,11 @@ __all__ = [
     "AzureTTS",
     "EspeakTTS",
     "Pyttsx3TTS",
+    "CoquiTTS",
+    "BarkTTS",
+    "TortoiseTTS",
+    "IndexTTS2",
+    "KittenTTS",
     "create_tts",
     "get_available_engines",
     "merge_audio_files",

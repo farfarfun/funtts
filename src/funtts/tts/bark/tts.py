@@ -15,11 +15,17 @@ from loguru import logger
 from funtts.base import BaseTTS
 from funtts.models import TTSRequest, TTSResponse, VoiceInfo, AudioSegment
 from funtts.models import SubtitleMaker
-from bark import SAMPLE_RATE, preload_models
 
+try:
+    import torch
+    from bark import SAMPLE_RATE, preload_models, generate_audio
+    from scipy.io.wavfile import write as write_wav
+    import soundfile as sf
 
-import torch
-from bark import generate_audio
+    BARK_AVAILABLE = True
+except ImportError:
+    BARK_AVAILABLE = False
+    SAMPLE_RATE = 24000
 
 
 class BarkTTS(BaseTTS):
@@ -72,6 +78,9 @@ class BarkTTS(BaseTTS):
         if self.model is not None:
             return
 
+        if not BARK_AVAILABLE:
+            raise RuntimeError("Bark TTS未安装，请运行: pip install bark>=0.1.5")
+
         try:
             logger.info("正在加载Bark TTS模型...")
 
@@ -96,9 +105,6 @@ class BarkTTS(BaseTTS):
 
             logger.success("Bark TTS模型加载成功")
 
-        except ImportError:
-            logger.error("Bark TTS未安装，请运行: pip install bark-voice")
-            raise RuntimeError("Bark TTS未安装，请先安装依赖")
         except Exception as e:
             logger.error(f"Bark TTS模型加载失败: {e}")
             raise RuntimeError(f"无法加载Bark TTS模型: {e}")
