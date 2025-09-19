@@ -1,68 +1,145 @@
 # FunTTS - 统一TTS接口库
 
-FunTTS是一个Python文本转语音(TTS)库，提供统一的接口来无缝切换不同的开源TTS引擎。通过简单的配置，你可以在多个TTS引擎之间轻松切换，而无需修改代码。
+[![PyPI version](https://badge.fury.io/py/funtts-plus.svg)](https://badge.fury.io/py/funtts-plus)
+[![Python](https://img.shields.io/pypi/pyversions/funtts-plus.svg)](https://pypi.org/project/funtts-plus/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 特性
+FunTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口来无缝切换不同的开源TTS引擎。通过简单的配置，你可以在多个TTS引擎之间轻松切换，而无需修改代码。
 
-- 🎯 **统一接口**: 所有TTS引擎使用相同的API接口
+## ✨ 核心特性
+
+- 🎯 **统一接口**: 所有TTS引擎使用相同的API接口，支持Request/Response模式
 - 🔄 **无缝切换**: 通过配置轻松切换不同的TTS引擎
-- 🎵 **多引擎支持**: 支持Edge TTS、Azure TTS、eSpeak、pyttsx3等
-- ⚙️ **灵活配置**: 支持全局配置和引擎特定配置
-- 📝 **字幕生成**: 支持自动生成SRT字幕文件
-- 🌍 **多语言支持**: 支持多种语言和语音
+- 🎵 **多引擎支持**: 支持Edge TTS、Azure TTS、eSpeak、pyttsx3等主流引擎
+- ⚙️ **灵活配置**: 支持全局配置和引擎特定配置管理
+- 📝 **智能字幕**: 支持SRT、VTT、FRT三种字幕格式，自动时间同步
+- 🎭 **多角色支持**: 支持多说话者场景，角色信息管理
+- 🔧 **工具集成**: 提供音频合并、字幕合并、响应合并等实用工具
+- 🌍 **多语言支持**: 支持多种语言和语音，智能语音选择
+- 📊 **数据模型**: 完整的数据结构定义，类型安全
+- 🚀 **高性能**: 异步处理支持，批量操作优化
 
 ## 支持的TTS引擎
 
-| 引擎 | 状态 | 字幕支持 | 描述 |
-|------|------|----------|------|
-| Edge TTS | ✅ | ✅ | 微软Edge浏览器的TTS引擎，免费且高质量 |
-| Azure TTS | ✅ | ✅ | 微软Azure认知服务TTS，需要API密钥 |
-| eSpeak | ✅ | ❌ | 开源的多语言语音合成器 |
-| pyttsx3 | ✅ | ❌ | 跨平台的Python TTS库 |
+| 引擎 | 状态 | 字幕支持 | 描述 | 文档 |
+|------|------|----------|------|------|
+| Edge TTS | ✅ | ✅ | 微软Edge浏览器的TTS引擎，免费且高质量 | [📖 文档](src/funtts/tts/edge/README.md) |
+| Azure TTS | ✅ | ✅ | 微软Azure认知服务TTS，需要API密钥 | [📖 文档](src/funtts/tts/azure/README.md) |
+| Coqui TTS | ✅ | ✅ | 功能强大的深度学习TTS工具包，支持多种模型 | [📖 文档](src/funtts/tts/coqui/README.md) |
+| Bark TTS | ✅ | ✅ | 支持非语言声音和音乐生成的Transformer TTS | [📖 文档](src/funtts/tts/bark/README.md) |
+| Tortoise TTS | ✅ | ✅ | 高质量语音克隆TTS，音质接近真人水平 | [📖 文档](src/funtts/tts/tortoise/README.md) |
+| IndexTTS2 | ✅ | ✅ | 工业级可控制TTS，支持情感控制和自然语言指令 | [📖 文档](src/funtts/tts/indextts2/README.md) |
+| KittenTTS | ✅ | ✅ | 基于深度学习的高质量TTS引擎，神经网络 | [📖 文档](src/funtts/tts/kitten/README.md) |
+| eSpeak | ✅ | ✅ | 开源的多语言语音合成器，轻量级 | [📖 文档](src/funtts/tts/espeak/README.md) |
+| pyttsx3 | ✅ | ✅ | 跨平台的Python TTS库，本地离线 | [📖 文档](src/funtts/tts/pyttsx3/README.md) |
 
-## 安装
+> 💡 **提示**: 点击文档链接查看每个引擎的详细配置说明、使用示例和故障排除指南。
+
+## 📦 安装
+
+### 基础安装
 
 ```bash
-pip install funtts
+# 基础功能安装
+pip install funtts-plus
 ```
 
-### 可选依赖
+### 按需安装引擎
 
 根据需要安装特定TTS引擎的依赖：
 
 ```bash
-# Edge TTS (推荐)
-pip install edge-tts
+# Edge TTS (推荐，免费高质量)
+pip install funtts-plus[edge]
 
-# Azure TTS
-pip install azure-cognitiveservices-speech
+# Azure TTS (需要API密钥)
+pip install funtts-plus[azure]
 
-# eSpeak (需要系统安装eSpeak)
-# Ubuntu/Debian: sudo apt-get install espeak
-# macOS: brew install espeak
-# Windows: 下载并安装eSpeak
+# Coqui TTS (功能强大的深度学习TTS工具包)
+pip install funtts-plus[coqui]
 
-# pyttsx3
-pip install pyttsx3
+# Bark TTS (支持非语言声音和音乐生成)
+pip install funtts-plus[bark]
+
+# Tortoise TTS (高质量语音克隆)
+pip install funtts-plus[tortoise]
+
+# IndexTTS2 (工业级TTS，支持情感控制)
+pip install funtts-plus[indextts2]
+
+# KittenTTS (深度学习TTS，需要GPU支持)
+pip install funtts-plus[kitten]
+
+# pyttsx3 (跨平台本地TTS)
+pip install funtts-plus[pyttsx3]
+
+# 完整安装（所有引擎）
+pip install funtts-plus[all]
 ```
 
-## 快速开始
+### 系统依赖
+
+某些引擎需要额外的系统依赖：
+
+```bash
+# eSpeak (需要系统安装)
+# Ubuntu/Debian
+sudo apt-get install espeak espeak-data
+
+# macOS
+brew install espeak
+
+# Windows
+# 从 http://espeak.sourceforge.net/download.html 下载安装
+
+# FFmpeg (用于音频处理，可选)
+# Ubuntu/Debian
+sudo apt-get install ffmpeg
+
+# macOS
+brew install ffmpeg
+
+# Windows
+# 从 https://ffmpeg.org/download.html 下载安装
+```
+
+## 🚀 快速开始
 
 ### 基本使用
 
 ```python
-from funtts import create_tts
+from funtts import create_tts, TTSRequest
 
 # 使用默认配置创建TTS实例
 tts = create_tts()
 
-# 生成语音
+# 方式1：简单调用（兼容旧版本）
 tts.create_tts(
     text="你好，这是一个TTS测试。",
     voice_rate=1.0,
     voice_file="output.wav",
     subtitle_file="output.srt"  # 可选，生成字幕文件
 )
+
+# 方式2：使用Request/Response模式（推荐）
+request = TTSRequest(
+    text="你好，这是FunTTS的新架构演示。",
+    voice_name="zh-CN-XiaoxiaoNeural",
+    voice_rate=1.2,
+    output_file="demo.wav",
+    generate_subtitles=True,
+    subtitle_format="srt"
+)
+
+response = tts.synthesize(request)
+if response.success:
+    print(f"✅ 生成成功！")
+    print(f"音频文件: {response.audio_file}")
+    print(f"字幕文件: {response.subtitle_file}")
+    print(f"FRT字幕: {response.frt_subtitle_file}")
+    print(f"音频时长: {response.duration:.2f}秒")
+else:
+    print(f"❌ 生成失败: {response.error_message}")
 ```
 
 ### 指定TTS引擎
@@ -237,15 +314,181 @@ FunTTS使用JSON格式的配置文件，默认位置为 `~/.funtts/config.json`�
 }
 ```
 
-## 示例
+## 📚 示例代码
 
-查看 `examples/` 目录获取更多使用示例：
+项目提供了丰富的示例代码，查看 `examples/` 目录：
 
-- `basic_usage.py` - 基本使用示例
-- `advanced_usage.py` - 高级功能示例
-- `batch_processing.py` - 批量处理示例
+- **`basic_usage.py`** - 基本使用示例，展示核心功能
+- **`advanced_usage.py`** - 高级功能示例，包括配置管理、引擎对比、自定义引擎
+- **`utils_example.py`** - 工具函数示例，音频合并、字幕处理、多角色对话
 
-## 开发
+### 运行示例
+
+```bash
+# 基本使用示例
+python examples/basic_usage.py
+
+# 高级功能演示
+python examples/advanced_usage.py
+
+# 工具函数演示
+python examples/utils_example.py
+```
+
+## 🏗️ 项目架构
+
+```
+funtts/
+├── base/           # 基础抽象类
+│   └── base.py     # BaseTTS基类
+├── models/         # 数据模型
+│   ├── audio_segment.py      # 音频片段
+│   ├── voice_info.py         # 语音信息
+│   ├── subtitle_maker.py     # 字幕制作器
+│   └── request_response.py   # 请求响应模型
+├── tts/            # TTS引擎实现
+│   ├── edge/       # Edge TTS
+│   ├── azure/      # Azure TTS
+│   ├── espeak/     # eSpeak
+│   └── pyttsx3/    # pyttsx3
+├── utils/          # 工具函数
+│   ├── audio_utils.py        # 音频处理
+│   ├── subtitle_utils.py     # 字幕处理
+│   └── response_utils.py     # 响应合并
+├── config.py       # 配置管理
+├── factory.py      # TTS工厂
+└── __init__.py     # 主入口
+```
+
+## 🔥 高级功能
+
+### 多角色对话生成
+
+```python
+from funtts import create_tts, TTSRequest
+from funtts.utils import merge_tts_responses_with_speakers
+
+# 创建TTS实例
+tts = create_tts("edge")
+
+# 定义对话内容
+dialogue = [
+    ("小明", "你好，今天天气真不错！", "zh-CN-YunxiNeural"),
+    ("小红", "是啊，我们去公园走走吧。", "zh-CN-XiaoxiaoNeural"),
+    ("小明", "好主意，我们现在就出发。", "zh-CN-YunxiNeural"),
+]
+
+# 生成各角色语音
+responses = []
+speaker_names = []
+for speaker, text, voice in dialogue:
+    request = TTSRequest(
+        text=text,
+        voice_name=voice,
+        output_file=f"{speaker}_{len(responses)+1}.wav",
+        generate_subtitles=True
+    )
+    response = tts.synthesize(request)
+    if response.success:
+        responses.append(response)
+        speaker_names.append(speaker)
+
+# 合并成完整对话
+merged = merge_tts_responses_with_speakers(
+    responses=responses,
+    speaker_names=speaker_names,
+    output_audio_file="dialogue.wav",
+    gap_duration=0.5  # 对话间隔0.5秒
+)
+
+if merged.success:
+    print(f"🎭 对话生成完成: {merged.audio_file}")
+    print(f"📝 字幕文件: {merged.subtitle_file}")
+```
+
+### 字幕格式支持
+
+```python
+from funtts import create_tts, TTSRequest
+from funtts.models import SubtitleMaker
+
+tts = create_tts("edge")
+
+# 生成多种字幕格式
+request = TTSRequest(
+    text="FunTTS支持多种字幕格式，包括SRT、VTT和FRT格式。",
+    voice_name="zh-CN-XiaoxiaoNeural",
+    output_file="demo.wav",
+    generate_subtitles=True,
+    subtitle_format="srt"  # 标准格式
+)
+
+response = tts.synthesize(request)
+if response.success:
+    # 自动生成两种字幕文件
+    print(f"📝 SRT字幕: {response.subtitle_file}")
+    print(f"🎯 FRT字幕: {response.frt_subtitle_file}")
+    
+    # 手动保存其他格式
+    if response.subtitle_maker:
+        # 保存VTT格式
+        vtt_file = "demo.sub.vtt"
+        response.subtitle_maker.save_to_file(vtt_file, "vtt")
+        print(f"🎬 VTT字幕: {vtt_file}")
+```
+
+## 📚 引擎文档
+
+每个TTS引擎都有详细的文档说明，包含安装、配置、使用示例和故障排除指南：
+
+### 🎯 Edge TTS
+- **文档**: [src/funtts/tts/edge/README.md](src/funtts/tts/edge/README.md)
+- **特点**: 免费、高质量、多语言支持
+- **适用**: 大多数应用场景，推荐首选
+
+### ☁️ Azure TTS  
+- **文档**: [src/funtts/tts/azure/README.md](src/funtts/tts/azure/README.md)
+- **特点**: 企业级、SSML支持、高度可定制
+- **适用**: 商业应用、需要高级功能的场景
+
+### 🐸 Coqui TTS
+- **文档**: [src/funtts/tts/coqui/README.md](src/funtts/tts/coqui/README.md)
+- **特点**: 多模型支持、语音克隆、多语言、可训练
+- **适用**: 研究开发、自定义模型、多语言应用
+
+### 🌳 Bark TTS
+- **文档**: [src/funtts/tts/bark/README.md](src/funtts/tts/bark/README.md)
+- **特点**: 非语言声音、音乐生成、特效音效、情感表达
+- **适用**: 创意内容、播客制作、游戏音效、娱乐应用
+
+### 🐢 Tortoise TTS
+- **文档**: [src/funtts/tts/tortoise/README.md](src/funtts/tts/tortoise/README.md)
+- **特点**: 极高音质、语音克隆、接近真人、多种预设
+- **适用**: 高质量配音、语音克隆、专业制作
+
+### 🏭 IndexTTS2
+- **文档**: [src/funtts/tts/indextts2/README.md](src/funtts/tts/indextts2/README.md)
+- **特点**: 工业级、情感控制、自然语言指令、精确时长控制
+- **适用**: 专业应用、情感语音、内容创作、AI助手
+
+### 🐱 KittenTTS
+- **文档**: [src/funtts/tts/kitten/README.md](src/funtts/tts/kitten/README.md)
+- **特点**: 深度学习、高质量、神经网络、多语音风格
+- **适用**: 高质量语音需求、AI应用、内容创作
+
+### 🔊 eSpeak TTS
+- **文档**: [src/funtts/tts/espeak/README.md](src/funtts/tts/espeak/README.md)
+- **特点**: 轻量级、开源、多语言
+- **适用**: Linux环境、嵌入式系统、资源受限场景
+
+### 🖥️ Pyttsx3 TTS
+- **文档**: [src/funtts/tts/pyttsx3/README.md](src/funtts/tts/pyttsx3/README.md)
+- **特点**: 跨平台、本地离线、系统集成
+- **适用**: 桌面应用、离线环境、快速原型
+
+> 📋 **开发规范**: 查看 [docs/ENGINE_DEVELOPMENT_GUIDE.md](docs/ENGINE_DEVELOPMENT_GUIDE.md) 了解如何开发新的TTS引擎。
+
+## 🛠️ 开发指南
 
 ### 添加新的TTS引擎
 
@@ -255,29 +498,136 @@ FunTTS使用JSON格式的配置文件，默认位置为 `~/.funtts/config.json`�
 
 ```python
 from funtts.base import BaseTTS
-from funtts.factory import TTSFactory
+from funtts import TTSFactory, TTSRequest, TTSResponse
+from funtts.models import VoiceInfo
+from typing import List
 
 class MyCustomTTS(BaseTTS):
-    def _tts(self, text, voice_rate, voice_file, *args, **kwargs):
-        # 实现TTS逻辑
-        pass
+    """自定义TTS引擎示例"""
     
-    def get_available_voices(self, language=None):
-        # 返回可用语音列表
-        pass
+    def synthesize(self, request: TTSRequest) -> TTSResponse:
+        """实现语音合成"""
+        try:
+            # 这里实现你的TTS逻辑
+            print(f"CustomTTS: 正在合成 '{request.text[:20]}...'")
+            
+            # 创建示例音频文件
+            with open(request.output_file, 'wb') as f:
+                f.write(b'\x00' * 1024)  # 示例数据
+            
+            return TTSResponse(
+                success=True,
+                request=request,
+                audio_file=request.output_file,
+                duration=2.0,
+                voice_used="custom_voice",
+                engine_info={"engine": "custom", "version": "1.0"}
+            )
+        except Exception as e:
+            return TTSResponse(
+                success=False,
+                request=request,
+                error_message=str(e)
+            )
     
-    def is_voice_available(self, voice_name):
-        # 检查语音是否可用
-        pass
+    def list_voices(self, language: str = None) -> List[VoiceInfo]:
+        """返回可用语音列表"""
+        return [
+            VoiceInfo(
+                name="custom_voice_1",
+                display_name="自定义语音1",
+                language="zh-CN",
+                gender="female",
+                engine="custom"
+            )
+        ]
+    
+    def is_voice_available(self, voice_name: str) -> bool:
+        """检查语音是否可用"""
+        return voice_name == "custom_voice_1"
 
 # 注册新引擎
 TTSFactory.register_engine("mycustom", MyCustomTTS)
+
+# 使用自定义引擎
+custom_tts = TTSFactory.create_tts("mycustom", "custom_voice_1")
 ```
 
-## 许可证
+### 项目构建
 
-MIT License
+```bash
+# 克隆项目
+git clone https://github.com/farfarfun/funtts.git
+cd funtts
 
-## 贡献
+# 安装开发依赖
+pip install -e .[all]
 
-欢迎提交Issue和Pull Request！
+# 运行测试
+python -m pytest tests/
+
+# 代码格式化
+black src/
+isort src/
+
+# 类型检查
+mypy src/
+```
+
+## 🤝 贡献指南
+
+我们欢迎各种形式的贡献！
+
+### 如何贡献
+
+1. **Fork** 本仓库
+2. **创建** 功能分支 (`git checkout -b feature/AmazingFeature`)
+3. **提交** 更改 (`git commit -m 'Add some AmazingFeature'`)
+4. **推送** 到分支 (`git push origin feature/AmazingFeature`)
+5. **打开** Pull Request
+
+### 贡献类型
+
+- 🐛 **Bug修复**: 修复已知问题
+- ✨ **新功能**: 添加新的TTS引擎或功能
+- 📚 **文档**: 改进文档和示例
+- 🎨 **优化**: 代码重构和性能优化
+- 🧪 **测试**: 添加或改进测试用例
+
+### 开发规范
+
+- 遵循PEP 8代码规范
+- 添加适当的类型注解
+- 编写清晰的文档字符串
+- 为新功能添加测试用例
+- 更新相关文档
+
+## 📄 许可证
+
+本项目采用 [MIT License](LICENSE) 许可证。
+
+## 🙏 致谢
+
+感谢以下开源项目的支持：
+
+- [edge-tts](https://github.com/rany2/edge-tts) - Microsoft Edge的文本转语音
+- [Azure Cognitive Services](https://azure.microsoft.com/services/cognitive-services/) - 微软Azure TTS服务
+- [eSpeak](http://espeak.sourceforge.net/) - 开源语音合成器
+- [pyttsx3](https://github.com/nateshmbhat/pyttsx3) - Python文本转语音库
+- [pydub](https://github.com/jiaaro/pydub) - 音频处理库
+
+## 📞 联系我们
+
+- **GitHub Issues**: [提交问题](https://github.com/farfarfun/funtts/issues)
+- **GitHub Discussions**: [参与讨论](https://github.com/farfarfun/funtts/discussions)
+- **Email**: farfarfun@qq.com
+
+---
+
+<div align="center">
+
+**如果这个项目对你有帮助，请给我们一个 ⭐ Star！**
+
+Made with ❤️ by [FarFarFun Team](https://github.com/farfarfun)
+
+</div>
