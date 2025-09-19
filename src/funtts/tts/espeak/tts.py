@@ -3,7 +3,6 @@ eSpeak TTS引擎实现
 支持开源的多语言语音合成器
 """
 
-import os
 import subprocess
 import time
 from typing import List, Optional
@@ -95,7 +94,7 @@ class EspeakTTS(BaseTTS):
         start_time = time.time()
 
         try:
-            voice_name = request.voice_name or self.default_voice
+            voice_name = request.voice_name or self.get_default_voice()
 
             # 构建eSpeak命令
             cmd = [
@@ -406,7 +405,7 @@ class EspeakTTS(BaseTTS):
         return {
             "engine": "espeak",
             "version": version,
-            "default_voice": self.default_voice,
+            "default_voice": self.get_default_voice(),
             "supported_formats": ["wav"],
             "max_text_length": 10000,
             "supports_ssml": True,

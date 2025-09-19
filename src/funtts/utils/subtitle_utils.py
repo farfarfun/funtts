@@ -7,7 +7,7 @@ from typing import List, Optional
 from ..models import SubtitleMaker, AudioSegment
 from funutil import getLogger
 
-logger = getLogger("funtts.utils")
+logger = getLogger("funtts")
 
 
 def merge_subtitle_makers(

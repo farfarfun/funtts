@@ -10,10 +10,13 @@ from typing import List, Optional
 from funutil import getLogger, deep_get
 from funutil.util.retrying import retry
 
-from ...base import BaseTTS
-from ...models import TTSRequest, TTSResponse, VoiceInfo, SubtitleMaker
+from funtts.base import BaseTTS
+from funtts.models import TTSRequest, TTSResponse, VoiceInfo, SubtitleMaker
+from edge_tts import Communicate
+from edge_tts import SubMaker as EdgeSubMaker
+from edge_tts import list_voices
 
-logger = getLogger("funtts.tts.edge")
+logger = getLogger("funtts")
 
 
 def convert_rate_to_percent(rate: float) -> str:
@@ -75,7 +78,7 @@ class EdgeTTS(BaseTTS):
                 )
 
             # 语音检查
-            voice_name = request.voice_name or self.default_voice
+            voice_name = request.voice_name or self.get_default_voice()
             if not self.is_voice_available(voice_name):
                 logger.warning(f"语音可能不可用: {voice_name}，尝试继续合成")
 
@@ -86,7 +89,7 @@ class EdgeTTS(BaseTTS):
             return TTSResponse(
                 success=False,
                 request=request,
-                error_message=f"缺少依赖包: pip install edge-tts",
+                error_message="缺少依赖包: pip install edge-tts",
                 error_code="MISSING_DEPENDENCY",
             )
 
@@ -112,11 +115,8 @@ class EdgeTTS(BaseTTS):
             voice_file = tempfile.mktemp(suffix=f".{request.output_format}")
 
         try:
-            from edge_tts import Communicate
-            from edge_tts import SubMaker as EdgeSubMaker
-
             rate_str = convert_rate_to_percent(request.voice_rate)
-            voice_name = request.voice_name or self.default_voice
+            voice_name = request.voice_name or self.get_default_voice()
             communicate = Communicate(text, voice_name, rate=rate_str)
             edge_sub_maker = EdgeSubMaker()
 
@@ -181,22 +181,16 @@ class EdgeTTS(BaseTTS):
             List[VoiceInfo]: 语音信息列表
         """
         try:
-            from edge_tts import list_voices
-
             voice_list = asyncio.run(list_voices())
             result = []
-
+            if voice_list is None:
+                logger.error("获取voice为空")
+                return []
             for voice in voice_list:
-                locale = deep_get(voice, "Locale", "")
-                if language and not locale.startswith(language):
-                    continue
-
                 voice_info = self._create_voice_info(voice)
                 result.append(voice_info)
-
             logger.info(f"获取到 {len(result)} 个Edge TTS语音")
             return result
-
         except ImportError:
             logger.error("edge-tts包未安装，无法获取语音列表")
             return []
@@ -217,7 +211,8 @@ class EdgeTTS(BaseTTS):
         try:
             voices = self.list_voices()
             return any(voice.name == voice_name for voice in voices)
-        except Exception:
+        except Exception as e:
+            logger.error("无法获取语音列表，假设语音可用", e)
             # 如果无法获取语音列表，假设语音可用
             return True
 
@@ -235,13 +230,14 @@ class EdgeTTS(BaseTTS):
 
     def _create_voice_info(self, voice_data: dict) -> VoiceInfo:
         """创建VoiceInfo对象"""
-        locale = deep_get(voice_data, "Locale", "")
+        locale = deep_get(voice_data, "Locale", "") or ""
+        gender = deep_get(voice_data, "Gender", "") or ""  # 确保不为None
         return VoiceInfo(
             name=deep_get(voice_data, "Name", ""),
             display_name=deep_get(voice_data, "DisplayName", ""),
             language=deep_get(voice_data, "Language", ""),
             locale=locale,
-            gender=deep_get(voice_data, "Gender", "").lower(),
+            gender=gender.lower(),
             region=locale.split("-")[1] if "-" in locale else "unknown",
             engine="edge",
             sample_rate=24000,
@@ -298,7 +294,7 @@ class EdgeTTS(BaseTTS):
         return {
             "engine": "edge",
             "version": "1.0.0",
-            "default_voice": self.default_voice,
+            "default_voice": self.get_default_voice(),
             "supported_formats": ["wav", "mp3"],
             "max_text_length": 10000,
             "supports_ssml": True,

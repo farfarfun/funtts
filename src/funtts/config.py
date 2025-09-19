@@ -10,7 +10,7 @@ from pathlib import Path
 
 from funutil import getLogger
 
-logger = getLogger("funtts.config")
+logger = getLogger("funtts")
 
 
 class TTSConfig:

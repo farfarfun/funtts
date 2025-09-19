@@ -7,7 +7,7 @@ import os
 from typing import List, Optional
 from funutil import getLogger
 
-logger = getLogger("funtts.utils")
+logger = getLogger("funtts")
 
 
 def merge_audio_files(

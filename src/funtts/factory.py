@@ -9,7 +9,7 @@ from .base import BaseTTS
 from funutil import getLogger
 
 
-logger = getLogger("funtts.factory")
+logger = getLogger("funtts")
 
 
 class TTSEngine(Enum):
@@ -82,10 +82,6 @@ class TTSFactory:
             instance = engine_class(
                 voice_name=voice_name, config=config or {}, **kwargs
             )
-
-            # 验证配置
-            if not instance.validate_config():
-                raise Exception(f"TTS引擎 {engine_name} 配置验证失败")
 
             logger.info(f"成功创建TTS引擎实例: {engine_name}, 语音: {voice_name}")
             return instance

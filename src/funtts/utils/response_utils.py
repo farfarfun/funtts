@@ -11,7 +11,7 @@ from .subtitle_utils import merge_subtitle_makers
 from funutil import getLogger
 
 
-logger = getLogger("funtts.utils")
+logger = getLogger("funtts")
 
 
 def merge_tts_responses(

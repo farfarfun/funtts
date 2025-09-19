@@ -13,7 +13,7 @@
 | **创意内容** | Bark TTS | Tortoise TTS | 特效音效、情感表达 |
 | **语音克隆** | Tortoise TTS | Coqui TTS | 极高质量、专业克隆 |
 | **嵌入式设备** | eSpeak | pyttsx3 | 轻量级、离线运行 |
-| **研究开发** | Coqui TTS | IndexTTS2 | 可训练、多模型支持 |
+| **研究开发** | IndexTTS2 | Bark TTS | 情感控制、特效音效 |
 
 ## 📊 详细对比
 

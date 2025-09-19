@@ -10,7 +10,7 @@ from typing import List, Optional
 from funutil import getLogger
 
 from ...base import BaseTTS
-from ...models import TTSRequest, TTSResponse, VoiceInfo, SubtitleMaker, AudioSegment
+from ...models import TTSRequest, TTSResponse, VoiceInfo, SubtitleMaker
 
 logger = getLogger("funtts.tts.azure")
 
@@ -115,7 +115,7 @@ class AzureTTS(BaseTTS):
                 subscription=self.speech_key, region=self.service_region
             )
 
-            voice_name = request.voice_name or self.default_voice
+            voice_name = request.voice_name or self.get_default_voice()
             speech_config.speech_synthesis_voice_name = voice_name
 
             # 设置输出格式
@@ -430,7 +430,7 @@ class AzureTTS(BaseTTS):
         return {
             "engine": "azure",
             "version": "1.0.0",
-            "default_voice": self.default_voice,
+            "default_voice": self.get_default_voice(),
             "supported_formats": ["wav", "mp3"],
             "max_text_length": 50000,
             "supports_ssml": True,

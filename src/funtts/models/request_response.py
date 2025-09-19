@@ -19,6 +19,7 @@ class TTSRequest:
     output_format: str = "wav"  # 输出格式
     sample_rate: int = 16000  # 采样率
     output_file: Optional[str] = None  # 输出文件路径，None则不保存文件
+    output_dir: Optional[str] = None  # 输出目录路径，用于某些引擎
     generate_subtitles: bool = False  # 是否生成字幕
     subtitle_format: str = "srt"  # 字幕格式 (srt/vtt/frt)
     language: Optional[str] = None  # 语言代码，用于语音选择
@@ -34,6 +35,7 @@ class TTSRequest:
             "output_format": self.output_format,
             "sample_rate": self.sample_rate,
             "output_file": self.output_file,
+            "output_dir": self.output_dir,
             "generate_subtitles": self.generate_subtitles,
             "subtitle_format": self.subtitle_format,
             "language": self.language,

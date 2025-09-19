@@ -14,6 +14,9 @@ import time
 from pathlib import Path
 from funtts.models import TTSRequest
 from funtts import create_tts, get_available_engines
+from funutil import getLogger
+
+logger = getLogger("funtts")
 
 
 def setup_output_directory():
@@ -25,8 +28,8 @@ def setup_output_directory():
 
 def demo_edge_tts():
     """演示Edge TTS - 免费推荐引擎"""
-    print("\n🔊 Edge TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 Edge TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.edge import EdgeTTS
@@ -40,37 +43,37 @@ def demo_edge_tts():
             output_dir="./tts_output/edge",
         )
 
-        print("正在生成语音...")
+        logger.info("正在生成语音...")
         start_time = time.time()
         response = tts.synthesize(request)
         end_time = time.time()
 
-        print("✅ 生成完成！")
-        print(f"📁 音频文件: {response.audio_file}")
-        print(f"⏱️  生成时间: {end_time - start_time:.2f}秒")
-        print(f"🎵 音频时长: {response.duration:.2f}秒")
+        logger.info("✅ 生成完成！")
+        logger.info(f"📁 音频文件: {response.audio_file}")
+        logger.info(f"⏱️  生成时间: {end_time - start_time:.2f}秒")
+        logger.info(f"🎵 音频时长: {response.duration:.2f}秒")
 
         # 获取可用语音
         voices = tts.list_voices(language="zh-CN")
-        print(f"🎭 可用中文语音数量: {len(voices)}")
+        logger.info(f"🎭 可用中文语音数量: {len(voices)}")
 
     except ImportError:
-        print("❌ Edge TTS未安装，跳过演示")
+        logger.info("❌ Edge TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ Edge TTS演示失败: {e}")
+        logger.info(f"❌ Edge TTS演示失败: {e}")
 
 
 def demo_azure_tts():
     """演示Azure TTS - 企业级引擎"""
-    print("\n🔊 Azure TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 Azure TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.azure import AzureTTS
 
         # 注意：需要设置Azure API密钥
         if not os.getenv("AZURE_SPEECH_KEY"):
-            print("⚠️  需要设置AZURE_SPEECH_KEY环境变量")
+            logger.info("⚠️  需要设置AZURE_SPEECH_KEY环境变量")
             return
 
         tts = AzureTTS()
@@ -97,20 +100,24 @@ def demo_azure_tts():
             subtitle_format="srt",
         )
 
-        print("正在生成SSML语音...")
+        logger.info("正在生成SSML语音...")
         response = tts.synthesize(request)
-        print(f"✅ Azure TTS生成完成: {response.audio_file}")
+        logger.info(f"✅ Azure TTS生成完成: {response.audio_file}")
 
     except ImportError:
-        print("❌ Azure TTS未安装，跳过演示")
+        logger.info("❌ Azure TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ Azure TTS演示失败: {e}")
+        logger.info(f"❌ Azure TTS演示失败: {e}")
 
 
 def demo_coqui_tts():
     """演示Coqui TTS - 深度学习引擎"""
-    print("\n🔊 Coqui TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 Coqui TTS 演示")
+    logger.info("=" * 50)
+
+    # Coqui TTS暂时注释掉，因为对Python版本有严格要求
+    logger.info("⚠️  Coqui TTS暂时禁用，因为对Python版本有严格要求")
+    return
 
     try:
         from funtts.tts.coqui import CoquiTTS
@@ -124,23 +131,23 @@ def demo_coqui_tts():
             output_dir="./tts_output/coqui",
         )
 
-        print("正在生成Coqui TTS语音...")
+        logger.info("正在生成Coqui TTS语音...")
         response = tts.synthesize(request)
-        print(f"✅ Coqui TTS生成完成: {response.audio_file}")
+        logger.info(f"✅ Coqui TTS生成完成: {response.audio_file}")
 
         # 演示语音克隆（需要参考音频）
-        print("💡 Coqui TTS支持语音克隆功能（需要参考音频文件）")
+        logger.info("💡 Coqui TTS支持语音克隆功能（需要参考音频文件）")
 
     except ImportError:
-        print("❌ Coqui TTS未安装，跳过演示")
+        logger.info("❌ Coqui TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ Coqui TTS演示失败: {e}")
+        logger.info(f"❌ Coqui TTS演示失败: {e}")
 
 
 def demo_bark_tts():
     """演示Bark TTS - 特效音效引擎"""
-    print("\n🔊 Bark TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 Bark TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.bark import BarkTTS
@@ -154,29 +161,29 @@ def demo_bark_tts():
             output_dir="./tts_output/bark",
         )
 
-        print("正在生成Bark TTS语音...")
+        logger.info("正在生成Bark TTS语音...")
         response = tts.synthesize(request)
-        print(f"✅ Bark TTS基础生成完成: {response.audio_file}")
+        logger.info(f"✅ Bark TTS基础生成完成: {response.audio_file}")
 
         # 演示特效功能
-        print("🎭 演示特效功能...")
+        logger.info("🎭 演示特效功能...")
         effects_response = tts.generate_with_effects(
             text="That's really funny! [laughter] Welcome to our show! ♪ This is amazing ♪",
             output_path="./tts_output/bark/effects_demo.wav",
             effects=["laughter", "music"],
         )
-        print(f"✅ 特效语音生成完成: {effects_response}")
+        logger.info(f"✅ 特效语音生成完成: {effects_response}")
 
     except ImportError:
-        print("❌ Bark TTS未安装，跳过演示")
+        logger.info("❌ Bark TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ Bark TTS演示失败: {e}")
+        logger.info(f"❌ Bark TTS演示失败: {e}")
 
 
 def demo_tortoise_tts():
     """演示Tortoise TTS - 高质量语音克隆引擎"""
-    print("\n🔊 Tortoise TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 Tortoise TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.tortoise import TortoiseTTS
@@ -190,22 +197,22 @@ def demo_tortoise_tts():
             output_dir="./tts_output/tortoise",
         )
 
-        print("正在生成Tortoise TTS语音（快速模式）...")
+        logger.info("正在生成Tortoise TTS语音（快速模式）...")
         response = tts.synthesize(request)
-        print(f"✅ Tortoise TTS生成完成: {response.audio_file}")
+        logger.info(f"✅ Tortoise TTS生成完成: {response.audio_file}")
 
-        print("💡 Tortoise TTS支持高质量语音克隆（需要参考音频文件）")
+        logger.info("💡 Tortoise TTS支持高质量语音克隆（需要参考音频文件）")
 
     except ImportError:
-        print("❌ Tortoise TTS未安装，跳过演示")
+        logger.info("❌ Tortoise TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ Tortoise TTS演示失败: {e}")
+        logger.info(f"❌ Tortoise TTS演示失败: {e}")
 
 
 def demo_indextts2():
     """演示IndexTTS2 - 情感控制引擎"""
-    print("\n🔊 IndexTTS2 演示")
-    print("=" * 50)
+    logger.info("🔊 IndexTTS2 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.indextts2 import IndexTTS2
@@ -218,20 +225,20 @@ def demo_indextts2():
             output_dir="./tts_output/indextts2",
         )
 
-        print("正在生成IndexTTS2语音...")
+        logger.info("正在生成IndexTTS2语音...")
         response = tts.synthesize(request)
-        print(f"✅ IndexTTS2生成完成: {response.audio_file}")
+        logger.info(f"✅ IndexTTS2生成完成: {response.audio_file}")
 
     except ImportError:
-        print("❌ IndexTTS2未安装，跳过演示")
+        logger.info("❌ IndexTTS2未安装，跳过演示")
     except Exception as e:
-        print(f"❌ IndexTTS2演示失败: {e}")
+        logger.info(f"❌ IndexTTS2演示失败: {e}")
 
 
 def demo_kitten_tts():
     """演示KittenTTS - 神经网络引擎"""
-    print("\n🔊 KittenTTS 演示")
-    print("=" * 50)
+    logger.info("🔊 KittenTTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.kitten import KittenTTS
@@ -244,20 +251,20 @@ def demo_kitten_tts():
             output_dir="./tts_output/kitten",
         )
 
-        print("正在生成KittenTTS语音...")
+        logger.info("正在生成KittenTTS语音...")
         response = tts.synthesize(request)
-        print(f"✅ KittenTTS生成完成: {response.audio_file}")
+        logger.info(f"✅ KittenTTS生成完成: {response.audio_file}")
 
     except ImportError:
-        print("❌ KittenTTS未安装，跳过演示")
+        logger.info("❌ KittenTTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ KittenTTS演示失败: {e}")
+        logger.info(f"❌ KittenTTS演示失败: {e}")
 
 
 def demo_espeak_tts():
     """演示eSpeak TTS - 轻量级引擎"""
-    print("\n🔊 eSpeak TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 eSpeak TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.espeak import EspeakTTS
@@ -270,20 +277,20 @@ def demo_espeak_tts():
             output_dir="./tts_output/espeak",
         )
 
-        print("正在生成eSpeak TTS语音...")
+        logger.info("正在生成eSpeak TTS语音...")
         response = tts.synthesize(request)
-        print(f"✅ eSpeak TTS生成完成: {response.audio_file}")
+        logger.info(f"✅ eSpeak TTS生成完成: {response.audio_file}")
 
     except ImportError:
-        print("❌ eSpeak TTS未安装，跳过演示")
+        logger.info("❌ eSpeak TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ eSpeak TTS演示失败: {e}")
+        logger.info(f"❌ eSpeak TTS演示失败: {e}")
 
 
 def demo_pyttsx3_tts():
     """演示pyttsx3 TTS - 跨平台本地引擎"""
-    print("\n🔊 pyttsx3 TTS 演示")
-    print("=" * 50)
+    logger.info("🔊 pyttsx3 TTS 演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.pyttsx3 import Pyttsx3TTS
@@ -296,39 +303,39 @@ def demo_pyttsx3_tts():
             output_dir="./tts_output/pyttsx3",
         )
 
-        print("正在生成pyttsx3 TTS语音...")
+        logger.info("正在生成pyttsx3 TTS语音...")
         response = tts.synthesize(request)
-        print(f"✅ pyttsx3 TTS生成完成: {response.audio_file}")
+        logger.info(f"✅ pyttsx3 TTS生成完成: {response.audio_file}")
 
     except ImportError:
-        print("❌ pyttsx3 TTS未安装，跳过演示")
+        logger.info("❌ pyttsx3 TTS未安装，跳过演示")
     except Exception as e:
-        print(f"❌ pyttsx3 TTS演示失败: {e}")
+        logger.info(f"❌ pyttsx3 TTS演示失败: {e}")
 
 
 def demo_factory_pattern():
     """演示工厂模式使用"""
-    print("\n🏭 工厂模式演示")
-    print("=" * 50)
+    logger.info("🏭 工厂模式演示")
+    logger.info("=" * 50)
 
     # 获取可用引擎
     available_engines = get_available_engines()
-    print(f"📋 可用引擎: {available_engines}")
+    logger.info(f"📋 可用引擎: {available_engines}")
 
     # 使用工厂模式创建TTS实例
     if "edge" in available_engines:
         tts = create_tts(engine_name="edge")
-        print(f"✅ 通过工厂模式创建Edge TTS实例: {type(tts).__name__}")
+        logger.info(f"✅ 通过工厂模式创建Edge TTS实例: {type(tts).__name__}")
 
     if "azure" in available_engines and os.getenv("AZURE_SPEECH_KEY"):
         tts = create_tts(engine_name="azure")
-        print(f"✅ 通过工厂模式创建Azure TTS实例: {type(tts).__name__}")
+        logger.info(f"✅ 通过工厂模式创建Azure TTS实例: {type(tts).__name__}")
 
 
 def demo_batch_processing():
     """演示批量处理"""
-    print("\n📦 批量处理演示")
-    print("=" * 50)
+    logger.info("📦 批量处理演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.edge import EdgeTTS
@@ -337,7 +344,7 @@ def demo_batch_processing():
 
         texts = ["这是第一段文本。", "这是第二段文本。", "这是第三段文本。"]
 
-        print("正在批量生成语音...")
+        logger.info("正在批量生成语音...")
         for i, text in enumerate(texts):
             request = TTSRequest(
                 text=text,
@@ -345,16 +352,16 @@ def demo_batch_processing():
                 output_dir=f"./tts_output/batch/item_{i}",
             )
             response = tts.synthesize(request)
-            print(f"  ✅ 批量项目 {i + 1}: {response.audio_file}")
+            logger.info(f"  ✅ 批量项目 {i + 1}: {response.audio_file}")
 
     except Exception as e:
-        print(f"❌ 批量处理演示失败: {e}")
+        logger.info(f"❌ 批量处理演示失败: {e}")
 
 
 def demo_subtitle_generation():
     """演示字幕生成"""
-    print("\n📝 字幕生成演示")
-    print("=" * 50)
+    logger.info("📝 字幕生成演示")
+    logger.info("=" * 50)
 
     try:
         from funtts.tts.edge import EdgeTTS
@@ -368,20 +375,20 @@ def demo_subtitle_generation():
             subtitle_format="srt,frt",
         )
 
-        print("正在生成带字幕的语音...")
+        logger.info("正在生成带字幕的语音...")
         response = tts.synthesize(request)
-        print(f"✅ 音频文件: {response.audio_file}")
-        print(f"📝 SRT字幕: {response.subtitle_file}")
-        print(f"📝 FRT字幕: {response.frt_subtitle_file}")
+        logger.info(f"✅ 音频文件: {response.audio_file}")
+        logger.info(f"📝 SRT字幕: {response.subtitle_file}")
+        logger.info(f"📝 FRT字幕: {response.frt_subtitle_file}")
 
     except Exception as e:
-        print(f"❌ 字幕生成演示失败: {e}")
+        logger.info(f"❌ 字幕生成演示失败: {e}")
 
 
 def performance_comparison():
     """性能对比演示"""
-    print("\n⚡ 性能对比演示")
-    print("=" * 50)
+    logger.info("⚡ 性能对比演示")
+    logger.info("=" * 50)
 
     test_text = "这是一个性能测试文本，用于比较不同TTS引擎的生成速度。"
 
@@ -412,32 +419,34 @@ def performance_comparison():
             results.append((engine_name, duration, response.duration))
 
         except Exception as e:
-            print(f"❌ {engine_name} 测试失败: {e}")
+            logger.info(f"❌ {engine_name} 测试失败: {e}")
 
     # 显示结果
-    print("\n📊 性能对比结果:")
-    print("-" * 60)
-    print(f"{'引擎名称':<15} {'生成时间(秒)':<12} {'音频时长(秒)':<12} {'实时率':<10}")
-    print("-" * 60)
+    logger.info("📊 性能对比结果:")
+    logger.info("-" * 60)
+    logger.info(
+        f"{'引擎名称':<15} {'生成时间(秒)':<12} {'音频时长(秒)':<12} {'实时率':<10}"
+    )
+    logger.info("-" * 60)
 
     for engine_name, gen_time, audio_duration in results:
         real_time_factor = audio_duration / gen_time if gen_time > 0 else 0
-        print(
+        logger.info(
             f"{engine_name:<15} {gen_time:<12.2f} {audio_duration:<12.2f} {real_time_factor:<10.2f}x"
         )
 
 
 def main():
     """主函数"""
-    print("🎉 FunTTS 综合演示")
-    print("=" * 80)
-    print("这个演示将展示FunTTS支持的所有TTS引擎的功能")
-    print("请确保已安装相应的依赖包")
-    print("=" * 80)
+    logger.info("🎉 FunTTS 综合演示")
+    logger.info("=" * 80)
+    logger.info("这个演示将展示FunTTS支持的所有TTS引擎的功能")
+    logger.info("请确保已安装相应的依赖包")
+    logger.info("=" * 80)
 
     # 创建输出目录
     output_dir = setup_output_directory()
-    print(f"📁 输出目录: {output_dir.absolute()}")
+    logger.info(f"📁 输出目录: {output_dir.absolute()}")
 
     # 演示各个TTS引擎
     demo_edge_tts()
@@ -458,10 +467,10 @@ def main():
     # 性能对比
     performance_comparison()
 
-    print("\n🎊 演示完成！")
-    print("=" * 80)
-    print("查看输出目录中生成的音频文件和字幕文件")
-    print("更多详细信息请参考各个引擎的README文档")
+    logger.info("🎊 演示完成！")
+    logger.info("=" * 80)
+    logger.info("查看输出目录中生成的音频文件和字幕文件")
+    logger.info("更多详细信息请参考各个引擎的README文档")
 
 
 if __name__ == "__main__":
