@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "funtts-plus"
-version = "0.1.6"
+version = "0.1.7"
 description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
 readme = "README.md"
 keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
@@ -40,7 +40,6 @@ indextts2 = [ "torch>=1.9.0", "torchaudio>=0.9.0", "transformers>=4.20.0", "soun
 kitten = [ "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 espeak = []
 pyttsx3 = [ "pyttsx3>=2.90",]
-all = [ "funtts-plus[edge,azure,coqui,bark,tortoise,indextts2,kitten,pyttsx3,audio]",]
 
 [project.urls]
 Organization = "https://github.com/farfarfun"
