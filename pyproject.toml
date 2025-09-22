@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "funtts-plus"
-version = "0.1.12"
+version = "0.1.17"
 description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
 readme = "README.md"
 keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
 classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.8", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Topic :: Multimedia :: Sound/Audio :: Speech", "Topic :: Software Development :: Libraries :: Python Modules",]
 requires-python = ">=3.8"
-dependencies = [ "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0",]
+dependencies = [ "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0", "fundrive>=2.0.53",]
 [[project.authors]]
 name = "牛哥"
 email = "niuliangtao@qq.com"
@@ -35,12 +35,11 @@ edge = [ "edge-tts>=6.1.0",]
 azure = [ "azure-cognitiveservices-speech>=1.30.0",]
 bark = [ "bark>=0.1.5", "torch>=1.9.0", "torchaudio>=0.9.0", "scipy>=1.7.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 tortoise = [ "tortoise-tts>=2.4.0", "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
-indextts2 = [ "torch>=1.9.0", "torchaudio>=0.9.0", "transformers>=4.20.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
+indextts = [ "indextts",]
 kitten = [ "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 espeak = []
 pyttsx3 = [ "pyttsx3>=2.90",]
 all = [ "funtts-plus[edge,azure,bark,tortoise,indextts2,kitten,espeak,pyttsx3]",]
-index-tts = [ "git+https://github.com/index-tts/index-tts.git",]
 
 [project.urls]
 Organization = "https://github.com/farfarfun"
@@ -55,3 +54,6 @@ license-files = []
 
 [tool.setuptools.packages.find]
 where = [ "src",]
+
+[tool.uv.sources.indextts]
+git = "https://github.com/index-tts/index-tts.git"
