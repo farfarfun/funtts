@@ -385,7 +385,7 @@ with TTSManager() as tts:
 ## 相关链接
 
 ### 官方资源
-- **GitHub仓库**: [https://github.com/iszhanjiawei/indexTTS2](https://github.com/iszhanjiawei/indexTTS2)
+- **GitHub仓库**: [https://github.com/index-tts/index-tts](https://github.com/index-tts/index-tts)
 - **官方组织**: [https://github.com/index-tts](https://github.com/index-tts)
 - **演示页面**: [https://index-tts.github.io/index-tts2.github.io/](https://index-tts.github.io/index-tts2.github.io/)
 - **论文**: [IndexTTS2: Controllable Industrial-Level Text-to-Speech](https://arxiv.org/abs/2024.xxxxx)
