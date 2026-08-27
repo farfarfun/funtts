@@ -57,3 +57,6 @@ where = [ "src",]
 
 [tool.uv.sources.indextts]
 git = "https://github.com/index-tts/index-tts.git"
+
+[dependency-groups]
+dev = [ "pytest>=7.0.0",]
