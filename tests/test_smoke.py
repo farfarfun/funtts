@@ -9,9 +9,6 @@
      或在无法合理 mock 时用 pytest.skip 明确跳过并说明原因，不伪造通过。
 
 发现但未修复的问题（按任务要求，只记录、不修复深层业务逻辑bug）：
-  - [project.scripts] 声明的 CLI 入口 `funtts = funtts.cli:main`，但仓库中
-    并不存在 `funtts/cli.py` 模块，导致 `funtts --help` 实际会报
-    ModuleNotFoundError。见 test_cli_entry_point_is_broken。
   - `funtts/tts/tortoise/tts.py` 中 `from funtts.models.subtitle import SubtitleMaker`
     引用了不存在的模块（应为 `funtts.models.subtitle_maker` 或
     `from funtts.models import SubtitleMaker`），导致顶层 `funtts.TortoiseTTS`
@@ -26,9 +23,6 @@
     完全不可用，与是否安装了对应第三方依赖无关。见
     test_engines_with_unimplemented_abstract_synthesize_are_broken。
 """
-
-import subprocess
-import sys
 
 import pytest
 
@@ -345,33 +339,26 @@ def test_merge_subtitle_makers_single_item_returns_copy():
 # ---------------------------------------------------------------------------
 
 
-def test_cli_entry_point_is_broken():
-    """pyproject.toml 中 [project.scripts] 声明了
-    `funtts = funtts.cli:main`，但仓库里不存在 funtts/cli.py。
-    这是一个已知bug（本次任务范围只写冒烟测试，不修复该bug），
-    因此这里改为跳过，并附上明确原因，而不是伪造一个通过的 --help 测试。
+def test_no_broken_console_script_entry_point():
+    """曾经 pyproject.toml 声明了 `funtts = funtts.cli:main`，但仓库里
+    从未有过 funtts/cli.py（`git log --all -- '*cli*'` 查无历史），装完包后
+    运行 `funtts` 会直接 ModuleNotFoundError。既然没有真正的 CLI 实现，
+    与其留着一个必崩的入口点，不如先移除声明——回归测试防止它又被加回来
+    却依然指向不存在的模块。等真正实现 CLI 时把这个测试换成 --help 冒烟测试。
     """
-    try:
-        import funtts.cli  # noqa: F401
-    except ModuleNotFoundError:
-        pytest.skip(
-            "已知bug：[project.scripts] 声明的 funtts.cli:main 入口点对应的 "
-            "funtts/cli.py 模块在仓库中不存在，`funtts --help` 实际会报 "
-            "ModuleNotFoundError，未在本次冒烟测试任务范围内修复。"
-        )
-    else:
-        pytest.fail("funtts.cli 现在存在了，请把本测试更新为真正的 --help 冒烟测试")
+    import tomllib
+    from pathlib import Path
 
-
-def test_console_script_help_reports_known_bug():
-    """双重确认：直接调用安装后的 `funtts` 控制台脚本（等价于
-    console_scripts 入口点），验证它确实是因为缺少 funtts/cli.py
-    而失败，而不是因为其他原因。"""
-    result = subprocess.run(
-        [sys.executable, "-c", "from funtts.cli import main; main()"],
-        capture_output=True,
-        text=True,
-        timeout=30,
+    pyproject = tomllib.loads(
+        (Path(__file__).parent.parent / "pyproject.toml").read_text()
     )
-    assert result.returncode != 0
-    assert "funtts.cli" in result.stderr or "No module named" in result.stderr
+    scripts = pyproject.get("project", {}).get("scripts", {})
+    for name, target in scripts.items():
+        module = target.split(":", 1)[0]
+        try:
+            __import__(module)
+        except ModuleNotFoundError:
+            pytest.fail(
+                f"[project.scripts] 声明的 {name} = {target!r} 指向的模块 "
+                f"{module!r} 不存在，装完包运行会直接崩溃"
+            )

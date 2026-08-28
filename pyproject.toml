@@ -46,9 +46,6 @@ Organization = "https://github.com/farfarfun"
 Repository = "https://github.com/farfarfun/funtts"
 Releases = "https://github.com/farfarfun/funtts/releases"
 
-[project.scripts]
-funtts = "funtts.cli:main"
-
 [tool.setuptools]
 license-files = []
 
