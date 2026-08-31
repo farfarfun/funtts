@@ -116,7 +116,7 @@ tts = CoquiTTS()
 request = TTSRequest(
     text="Hello, this is Coqui TTS speaking!",
     voice_name="default",
-    output_dir="./output"
+    output_dir="./output",
 )
 
 # 执行语音合成
@@ -154,7 +154,7 @@ for voice in voices[:5]:  # 显示前5个
 request = TTSRequest(
     text="This is a multi-speaker TTS model.",
     voice_name="p225",  # VCTK数据集中的说话人ID
-    output_dir="./output"
+    output_dir="./output",
 )
 
 response = tts.synthesize(request)
@@ -170,7 +170,7 @@ request = TTSRequest(
     text="This is voice cloning with Coqui TTS.",
     speaker_wav="path/to/reference_voice.wav",  # 参考语音文件
     language="en",
-    output_dir="./output"
+    output_dir="./output",
 )
 
 response = tts.synthesize(request)
@@ -180,7 +180,7 @@ cloned_audio = tts.clone_voice(
     text="Hello, this is my cloned voice!",
     speaker_wav="path/to/reference_voice.wav",
     output_path="./output/cloned_voice.wav",
-    language="en"
+    language="en",
 )
 ```
 
@@ -189,10 +189,7 @@ cloned_audio = tts.clone_voice(
 # 中文合成
 tts_zh = CoquiTTS(model_name="tts_models/zh-CN/baker/tacotron2-DDC-GST")
 
-request = TTSRequest(
-    text="你好，这是Coqui TTS中文语音合成。",
-    output_dir="./output"
-)
+request = TTSRequest(text="你好，这是Coqui TTS中文语音合成。", output_dir="./output")
 
 response = tts_zh.synthesize(request)
 
@@ -200,8 +197,7 @@ response = tts_zh.synthesize(request)
 tts_es = CoquiTTS(model_name="tts_models/es/mai/tacotron2-DDC")
 
 request = TTSRequest(
-    text="Hola, esto es síntesis de voz en español.",
-    output_dir="./output"
+    text="Hola, esto es síntesis de voz en español.", output_dir="./output"
 )
 
 response = tts_es.synthesize(request)
@@ -214,7 +210,7 @@ request = TTSRequest(
     text="This text will be converted to speech with subtitles.",
     voice_name="default",
     subtitle_format="srt,frt",  # 生成SRT和FRT格式字幕
-    output_dir="./output"
+    output_dir="./output",
 )
 
 response = tts.synthesize(request)
@@ -228,15 +224,13 @@ print(f"FRT字幕: {response.frt_subtitle_file}")
 texts = [
     "First sentence to synthesize.",
     "Second sentence for batch processing.",
-    "Third and final sentence."
+    "Third and final sentence.",
 ]
 
 responses = []
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        voice_name="default",
-        output_dir=f"./output/batch_{i}"
+        text=text, voice_name="default", output_dir=f"./output/batch_{i}"
     )
     response = tts.synthesize(request)
     responses.append(response)
@@ -252,7 +246,7 @@ tts = CoquiTTS(
     device="cuda",
     sample_rate=44100,
     language="en",
-    emotion="happy"
+    emotion="happy",
 )
 
 # 获取引擎信息
@@ -289,8 +283,8 @@ print(f"支持的语言: {info['supported_languages']}")
 models = tts.list_available_models()
 
 # 按语言筛选
-en_models = [m for m in models if '/en/' in m]
-zh_models = [m for m in models if '/zh/' in m]
+en_models = [m for m in models if "/en/" in m]
+zh_models = [m for m in models if "/zh/" in m]
 
 print(f"英语模型数量: {len(en_models)}")
 print(f"中文模型数量: {len(zh_models)}")
@@ -301,13 +295,11 @@ print(f"中文模型数量: {len(zh_models)}")
 ### GPU加速
 ```python
 # 使用GPU加速
-tts = CoquiTTS(
-    model_name="tts_models/en/ljspeech/vits",
-    device="cuda"
-)
+tts = CoquiTTS(model_name="tts_models/en/ljspeech/vits", device="cuda")
 
 # 检查GPU状态
 import torch
+
 if torch.cuda.is_available():
     print(f"GPU设备: {torch.cuda.get_device_name()}")
     print(f"GPU内存: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f}GB")
@@ -330,7 +322,7 @@ tts_clone = CoquiTTS(model_name="tts_models/multilingual/multi-dataset/your_tts"
 # 对于内存受限的环境
 tts = CoquiTTS(
     model_name="tts_models/en/ljspeech/speedy-speech",  # 轻量级模型
-    device="cpu"
+    device="cpu",
 )
 ```
 
@@ -381,6 +373,7 @@ tts = CoquiTTS(
 ### 调试模式
 ```python
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 # 启用详细日志
@@ -397,7 +390,7 @@ synthesis_time = time.time() - start_time
 
 print(f"合成耗时: {synthesis_time:.2f}秒")
 print(f"音频时长: {response.duration:.2f}秒")
-print(f"实时率: {response.duration/synthesis_time:.2f}x")
+print(f"实时率: {response.duration / synthesis_time:.2f}x")
 ```
 
 ## 最佳实践
@@ -417,6 +410,7 @@ def choose_model(use_case):
     else:
         return "tts_models/en/ljspeech/vits"
 
+
 model_name = choose_model("realtime")
 tts = CoquiTTS(model_name=model_name)
 ```
@@ -425,19 +419,18 @@ tts = CoquiTTS(model_name=model_name)
 ```python
 import re
 
+
 def preprocess_text(text):
     # 清理特殊字符
-    text = re.sub(r'[^\w\s.,!?;:]', '', text)
+    text = re.sub(r"[^\w\s.,!?;:]", "", text)
     # 处理数字
-    text = re.sub(r'\d+', lambda m: num2words(int(m.group())), text)
+    text = re.sub(r"\d+", lambda m: num2words(int(m.group())), text)
     # 规范化空格
-    text = re.sub(r'\s+', ' ', text.strip())
+    text = re.sub(r"\s+", " ", text.strip())
     return text
 
-request = TTSRequest(
-    text=preprocess_text("原始文本..."),
-    voice_name="default"
-)
+
+request = TTSRequest(text=preprocess_text("原始文本..."), voice_name="default")
 ```
 
 ### 3. 错误处理
@@ -452,6 +445,7 @@ def safe_synthesize(tts, request, max_retries=3):
             print(f"合成失败，重试 {attempt + 1}/{max_retries}: {e}")
             time.sleep(1)
 
+
 # 使用方式
 try:
     response = safe_synthesize(tts, request)
@@ -465,16 +459,17 @@ class TTSManager:
     def __init__(self, model_name):
         self.model_name = model_name
         self.tts = None
-    
+
     def __enter__(self):
         self.tts = CoquiTTS(model_name=self.model_name)
         return self.tts
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         # 清理资源
-        if self.tts and hasattr(self.tts, 'tts_model'):
+        if self.tts and hasattr(self.tts, "tts_model"):
             del self.tts.tts_model
         del self.tts
+
 
 # 使用方式
 with TTSManager("tts_models/en/ljspeech/vits") as tts:

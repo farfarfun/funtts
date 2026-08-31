@@ -146,7 +146,7 @@ tts.create_tts(
     text="你好，这是一个TTS测试。",
     voice_rate=1.0,
     voice_file="output.wav",
-    subtitle_file="output.srt"  # 可选，生成字幕文件
+    subtitle_file="output.srt",  # 可选，生成字幕文件
 )
 
 # 方式2：使用Request/Response模式（推荐）
@@ -156,7 +156,7 @@ request = TTSRequest(
     voice_rate=1.2,
     output_file="demo.wav",
     generate_subtitles=True,
-    subtitle_format="srt"
+    subtitle_format="srt",
 )
 
 response = tts.synthesize(request)
@@ -176,21 +176,15 @@ else:
 from funtts import TTSFactory
 
 # 使用Edge TTS
-edge_tts = TTSFactory.create_tts(
-    engine_name="edge",
-    voice_name="zh-CN-XiaoxiaoNeural"
-)
+edge_tts = TTSFactory.create_tts(engine_name="edge", voice_name="zh-CN-XiaoxiaoNeural")
 
 # 使用eSpeak
-espeak_tts = TTSFactory.create_tts(
-    engine_name="espeak", 
-    voice_name="zh"
-)
+espeak_tts = TTSFactory.create_tts(engine_name="espeak", voice_name="zh")
 
 # 使用pyttsx3
 pyttsx3_tts = TTSFactory.create_tts(
     engine_name="pyttsx3",
-    voice_name="0"  # 使用第一个可用语音
+    voice_name="0",  # 使用第一个可用语音
 )
 ```
 
@@ -208,10 +202,9 @@ config.set_default_voice("zh-CN-XiaoxiaoNeural")
 config.set_default_rate(1.2)
 
 # 设置引擎特定配置
-config.set_engine_config("azure", {
-    "subscription_key": "your-api-key",
-    "region": "eastus"
-})
+config.set_engine_config(
+    "azure", {"subscription_key": "your-api-key", "region": "eastus"}
+)
 
 # 保存配置
 config.save_config()
@@ -251,8 +244,7 @@ tts_instances = {}
 for engine in engines:
     try:
         tts_instances[engine] = TTSFactory.create_tts(
-            engine_name=engine,
-            voice_name="default"
+            engine_name=engine, voice_name="default"
         )
     except Exception as e:
         print(f"创建{engine}引擎失败: {e}")
@@ -264,16 +256,9 @@ for engine in engines:
 from funtts import TTSFactory
 
 # 使用自定义配置
-custom_config = {
-    "volume": 0.8,
-    "pitch": 1.1
-}
+custom_config = {"volume": 0.8, "pitch": 1.1}
 
-tts = TTSFactory.create_tts(
-    engine_name="pyttsx3",
-    voice_name="0",
-    config=custom_config
-)
+tts = TTSFactory.create_tts(engine_name="pyttsx3", voice_name="0", config=custom_config)
 ```
 
 ### 批量处理
@@ -283,25 +268,18 @@ from funtts import create_tts
 import os
 
 # 批量处理文本文件
-texts = [
-    "第一段文本内容",
-    "第二段文本内容", 
-    "第三段文本内容"
-]
+texts = ["第一段文本内容", "第二段文本内容", "第三段文本内容"]
 
 tts = create_tts(engine_name="edge")
 
 for i, text in enumerate(texts):
-    audio_file = f"output_{i+1}.wav"
-    subtitle_file = f"output_{i+1}.srt"
-    
+    audio_file = f"output_{i + 1}.wav"
+    subtitle_file = f"output_{i + 1}.srt"
+
     tts.create_tts(
-        text=text,
-        voice_rate=1.0,
-        voice_file=audio_file,
-        subtitle_file=subtitle_file
+        text=text, voice_rate=1.0, voice_file=audio_file, subtitle_file=subtitle_file
     )
-    
+
     print(f"生成完成: {audio_file}")
 ```
 
@@ -413,8 +391,8 @@ for speaker, text, voice in dialogue:
     request = TTSRequest(
         text=text,
         voice_name=voice,
-        output_file=f"{speaker}_{len(responses)+1}.wav",
-        generate_subtitles=True
+        output_file=f"{speaker}_{len(responses) + 1}.wav",
+        generate_subtitles=True,
     )
     response = tts.synthesize(request)
     if response.success:
@@ -426,7 +404,7 @@ merged = merge_tts_responses_with_speakers(
     responses=responses,
     speaker_names=speaker_names,
     output_audio_file="dialogue.wav",
-    gap_duration=0.5  # 对话间隔0.5秒
+    gap_duration=0.5,  # 对话间隔0.5秒
 )
 
 if merged.success:
@@ -448,7 +426,7 @@ request = TTSRequest(
     voice_name="zh-CN-XiaoxiaoNeural",
     output_file="demo.wav",
     generate_subtitles=True,
-    subtitle_format="srt"  # 标准格式
+    subtitle_format="srt",  # 标准格式
 )
 
 response = tts.synthesize(request)
@@ -456,7 +434,7 @@ if response.success:
     # 自动生成两种字幕文件
     print(f"📝 SRT字幕: {response.subtitle_file}")
     print(f"🎯 FRT字幕: {response.frt_subtitle_file}")
-    
+
     # 手动保存其他格式
     if response.subtitle_maker:
         # 保存VTT格式
@@ -530,34 +508,31 @@ from funtts import TTSFactory, TTSRequest, TTSResponse
 from funtts.models import VoiceInfo
 from typing import List
 
+
 class MyCustomTTS(BaseTTS):
     """自定义TTS引擎示例"""
-    
+
     def synthesize(self, request: TTSRequest) -> TTSResponse:
         """实现语音合成"""
         try:
             # 这里实现你的TTS逻辑
             print(f"CustomTTS: 正在合成 '{request.text[:20]}...'")
-            
+
             # 创建示例音频文件
-            with open(request.output_file, 'wb') as f:
-                f.write(b'\x00' * 1024)  # 示例数据
-            
+            with open(request.output_file, "wb") as f:
+                f.write(b"\x00" * 1024)  # 示例数据
+
             return TTSResponse(
                 success=True,
                 request=request,
                 audio_file=request.output_file,
                 duration=2.0,
                 voice_used="custom_voice",
-                engine_info={"engine": "custom", "version": "1.0"}
+                engine_info={"engine": "custom", "version": "1.0"},
             )
         except Exception as e:
-            return TTSResponse(
-                success=False,
-                request=request,
-                error_message=str(e)
-            )
-    
+            return TTSResponse(success=False, request=request, error_message=str(e))
+
     def list_voices(self, language: str = None) -> List[VoiceInfo]:
         """返回可用语音列表"""
         return [
@@ -566,13 +541,14 @@ class MyCustomTTS(BaseTTS):
                 display_name="自定义语音1",
                 language="zh-CN",
                 gender="female",
-                engine="custom"
+                engine="custom",
             )
         ]
-    
+
     def is_voice_available(self, voice_name: str) -> bool:
         """检查语音是否可用"""
         return voice_name == "custom_voice_1"
+
 
 # 注册新引擎
 TTSFactory.register_engine("mycustom", MyCustomTTS)

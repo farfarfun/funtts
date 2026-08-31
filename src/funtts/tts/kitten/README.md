@@ -60,13 +60,13 @@ from funtts.tts.kitten import KittenTTS
 
 # 基本配置
 tts = KittenTTS(
-    voice_name="default",           # 语音名称
-    model_path="path/to/model.pth", # 模型文件路径
-    config_path="path/to/config.json", # 配置文件路径
-    device="auto",                  # 计算设备 ('cpu', 'cuda', 'auto')
-    sample_rate=22050,             # 采样率
-    speed=1.0,                     # 语音速度倍数
-    pitch=1.0                      # 音调调节
+    voice_name="default",  # 语音名称
+    model_path="path/to/model.pth",  # 模型文件路径
+    config_path="path/to/config.json",  # 配置文件路径
+    device="auto",  # 计算设备 ('cpu', 'cuda', 'auto')
+    sample_rate=22050,  # 采样率
+    speed=1.0,  # 语音速度倍数
+    pitch=1.0,  # 音调调节
 )
 ```
 
@@ -93,7 +93,7 @@ from funtts.tts.kitten import KittenTTS
 tts = KittenTTS(
     voice_name="default",
     model_path="models/kitten_tts_model.pth",
-    config_path="models/kitten_tts_config.json"
+    config_path="models/kitten_tts_config.json",
 )
 
 # 创建请求
@@ -101,7 +101,7 @@ request = TTSRequest(
     text="你好，这是KittenTTS语音合成测试。",
     output_file="output.wav",
     voice_rate=1.0,
-    generate_subtitles=True
+    generate_subtitles=True,
 )
 
 # 执行合成
@@ -142,7 +142,7 @@ tts = KittenTTS(
     device="cuda",
     sample_rate=24000,
     speed=1.2,  # 1.2倍速
-    pitch=1.1   # 稍微提高音调
+    pitch=1.1,  # 稍微提高音调
 )
 
 # 检查语音可用性
@@ -155,49 +155,31 @@ else:
 ### 批量合成
 
 ```python
-texts = [
-    "第一段文本内容",
-    "第二段文本内容", 
-    "第三段文本内容"
-]
+texts = ["第一段文本内容", "第二段文本内容", "第三段文本内容"]
 
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        output_file=f"output_{i+1}.wav",
-        generate_subtitles=True
+        text=text, output_file=f"output_{i + 1}.wav", generate_subtitles=True
     )
-    
+
     response = tts.synthesize(request)
     if response.success:
-        print(f"文件 {i+1} 合成完成: {response.duration:.2f}s")
+        print(f"文件 {i + 1} 合成完成: {response.duration:.2f}s")
     else:
-        print(f"文件 {i+1} 合成失败: {response.error_message}")
+        print(f"文件 {i + 1} 合成失败: {response.error_message}")
 ```
 
 ### 不同音频格式
 
 ```python
 # WAV格式（默认）
-request = TTSRequest(
-    text="测试文本",
-    output_file="output.wav",
-    output_format="wav"
-)
+request = TTSRequest(text="测试文本", output_file="output.wav", output_format="wav")
 
 # MP3格式
-request = TTSRequest(
-    text="测试文本",
-    output_file="output.mp3",
-    output_format="mp3"
-)
+request = TTSRequest(text="测试文本", output_file="output.mp3", output_format="mp3")
 
 # OGG格式
-request = TTSRequest(
-    text="测试文本",
-    output_file="output.ogg",
-    output_format="ogg"
-)
+request = TTSRequest(text="测试文本", output_file="output.ogg", output_format="ogg")
 ```
 
 ## 可用语音
@@ -306,6 +288,7 @@ pip install soundfile librosa
 1. **启用详细日志**:
 ```python
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 ```
 
@@ -318,6 +301,7 @@ print(info)
 3. **测试GPU可用性**:
 ```python
 import torch
+
 print(f"CUDA available: {torch.cuda.is_available()}")
 print(f"CUDA device count: {torch.cuda.device_count()}")
 ```

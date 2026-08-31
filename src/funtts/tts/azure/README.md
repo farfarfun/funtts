@@ -77,19 +77,19 @@ from funtts import TTSFactory
 
 # 方式1: 通过参数配置
 tts = TTSFactory.create_tts(
-    "azure", 
+    "azure",
     "zh-CN-XiaoxiaoNeural",
     speech_key="your-speech-service-key",
-    service_region="eastus"
+    service_region="eastus",
 )
 
 # 方式2: 通过全局配置
 from funtts import get_config
+
 config = get_config()
-config.set_engine_config("azure", {
-    "speech_key": "your-speech-service-key",
-    "service_region": "eastus"
-})
+config.set_engine_config(
+    "azure", {"speech_key": "your-speech-service-key", "service_region": "eastus"}
+)
 ```
 
 ### 高级配置
@@ -100,12 +100,12 @@ from funtts.models import TTSRequest
 request = TTSRequest(
     text="你好，世界！",
     voice_name="zh-CN-XiaoxiaoNeural",
-    voice_rate=1.2,                    # 语音速率
-    voice_pitch=1.0,                   # 音调（通过SSML）
-    voice_volume=1.0,                  # 音量（通过SSML）
-    output_format="wav",               # 输出格式
-    generate_subtitles=True,           # 生成字幕
-    subtitle_format="srt"              # 字幕格式
+    voice_rate=1.2,  # 语音速率
+    voice_pitch=1.0,  # 音调（通过SSML）
+    voice_volume=1.0,  # 音量（通过SSML）
+    output_format="wav",  # 输出格式
+    generate_subtitles=True,  # 生成字幕
+    subtitle_format="srt",  # 字幕格式
 )
 ```
 
@@ -118,17 +118,14 @@ from funtts import TTSFactory, TTSRequest
 
 # 创建引擎实例
 tts = TTSFactory.create_tts(
-    "azure", 
-    "zh-CN-XiaoxiaoNeural",
-    speech_key="your-key",
-    service_region="eastus"
+    "azure", "zh-CN-XiaoxiaoNeural", speech_key="your-key", service_region="eastus"
 )
 
 # 合成语音
 request = TTSRequest(
     text="欢迎使用Azure TTS引擎！",
     voice_name="zh-CN-XiaoxiaoNeural",
-    output_file="output.wav"
+    output_file="output.wav",
 )
 response = tts.synthesize(request)
 
@@ -159,9 +156,7 @@ ssml_text = """
 """
 
 request = TTSRequest(
-    text=ssml_text,
-    voice_name="zh-CN-XiaoxiaoNeural",
-    output_file="ssml_demo.wav"
+    text=ssml_text, voice_name="zh-CN-XiaoxiaoNeural", output_file="ssml_demo.wav"
 )
 ```
 
@@ -174,22 +169,20 @@ emotional_requests = [
     TTSRequest(
         text="今天天气真好！我们去公园玩吧！",
         voice_name="zh-CN-XiaoxiaoNeural",
-        output_file="happy.wav"
+        output_file="happy.wav",
     ),
-    
     # 新闻播报风格
     TTSRequest(
         text="这里是新闻播报，今天的主要新闻如下。",
         voice_name="zh-CN-YunyangNeural",  # 新闻播报语音
-        output_file="news.wav"
+        output_file="news.wav",
     ),
-    
     # 客服风格
     TTSRequest(
         text="您好，很高兴为您服务，请问有什么可以帮助您的吗？",
         voice_name="zh-CN-XiaoyiNeural",
-        output_file="service.wav"
-    )
+        output_file="service.wav",
+    ),
 ]
 ```
 
@@ -200,21 +193,21 @@ emotional_requests = [
 chinese_request = TTSRequest(
     text="你好，我是中文语音助手。",
     voice_name="zh-CN-XiaoxiaoNeural",
-    output_file="chinese.wav"
+    output_file="chinese.wav",
 )
 
 # 英文语音
 english_request = TTSRequest(
     text="Hello, I am your English voice assistant.",
     voice_name="en-US-AriaNeural",
-    output_file="english.wav"
+    output_file="english.wav",
 )
 
 # 日文语音
 japanese_request = TTSRequest(
     text="こんにちは、私はあなたの日本語音声アシスタントです。",
     voice_name="ja-JP-NanamiNeural",
-    output_file="japanese.wav"
+    output_file="japanese.wav",
 )
 
 # 批量处理
@@ -243,7 +236,7 @@ request = TTSRequest(
     voice_name="zh-CN-XiaoxiaoNeural",
     voice_rate=1.1,
     output_file="long_text.wav",
-    generate_subtitles=True
+    generate_subtitles=True,
 )
 
 response = tts.synthesize(request)
@@ -291,6 +284,7 @@ print(f"共有 {len(voices)} 个语音可用")
 
 # 按语言分组显示
 from collections import defaultdict
+
 voices_by_lang = defaultdict(list)
 for voice in voices:
     voices_by_lang[voice.language].append(voice)
@@ -369,9 +363,7 @@ A: 调整音频参数
 texts = ["文本1", "文本2", "文本3"]
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        voice_name="zh-CN-XiaoxiaoNeural",
-        output_file=f"batch_{i}.wav"
+        text=text, voice_name="zh-CN-XiaoxiaoNeural", output_file=f"batch_{i}.wav"
     )
     response = tts.synthesize(request)
 
@@ -382,9 +374,9 @@ tts = TTSFactory.create_tts("azure", "zh-CN-XiaoxiaoNeural")
 # 3. 选择合适的区域
 # 选择地理位置较近的Azure区域以减少延迟
 tts = TTSFactory.create_tts(
-    "azure", 
+    "azure",
     "zh-CN-XiaoxiaoNeural",
-    service_region="eastasia"  # 亚洲用户选择eastasia
+    service_region="eastasia",  # 亚洲用户选择eastasia
 )
 
 # 4. 优化文本格式

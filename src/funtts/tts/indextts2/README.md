@@ -102,7 +102,7 @@ tts = IndexTTS2()
 request = TTSRequest(
     text="你好，这是IndexTTS2语音合成测试",
     voice_name="zh-CN-XiaoxiaoNeural",
-    output_dir="./output"
+    output_dir="./output",
 )
 
 # 执行语音合成
@@ -124,7 +124,7 @@ request = TTSRequest(
     text="今天天气真好，心情特别开心！",
     voice_name="zh-CN-XiaoxiaoNeural",
     emotion="happy",  # 情感类型
-    emotion_strength=1.2  # 情感强度
+    emotion_strength=1.2,  # 情感强度
 )
 
 response = tts.synthesize(request)
@@ -136,7 +136,7 @@ response = tts.synthesize(request)
 request = TTSRequest(
     text="这段话会以较快的语速播放",
     voice_name="zh-CN-YunxiNeural",
-    speed=1.5  # 1.5倍速
+    speed=1.5,  # 1.5倍速
 )
 
 response = tts.synthesize(request)
@@ -149,7 +149,7 @@ request = TTSRequest(
     text="这是一段需要生成字幕的文本",
     voice_name="zh-CN-XiaoxiaoNeural",
     subtitle_format="srt,frt",  # 生成SRT和FRT格式字幕
-    output_dir="./output"
+    output_dir="./output",
 )
 
 response = tts.synthesize(request)
@@ -160,18 +160,12 @@ print(f"FRT字幕: {response.frt_subtitle_file}")
 
 ### 批量处理
 ```python
-texts = [
-    "第一段文本内容",
-    "第二段文本内容", 
-    "第三段文本内容"
-]
+texts = ["第一段文本内容", "第二段文本内容", "第三段文本内容"]
 
 responses = []
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        voice_name="zh-CN-XiaoxiaoNeural",
-        output_dir=f"./output/batch_{i}"
+        text=text, voice_name="zh-CN-XiaoxiaoNeural", output_dir=f"./output/batch_{i}"
     )
     response = tts.synthesize(request)
     responses.append(response)
@@ -187,7 +181,7 @@ tts = IndexTTS2(
     top_k=40,
     top_p=0.85,
     emotion_strength=1.2,
-    speed_factor=1.1
+    speed_factor=1.1,
 )
 
 # 获取引擎信息
@@ -231,6 +225,7 @@ tts = IndexTTS2(device="cuda")
 
 # 检查GPU可用性
 import torch
+
 if torch.cuda.is_available():
     print(f"GPU设备: {torch.cuda.get_device_name()}")
     print(f"GPU内存: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f}GB")
@@ -242,7 +237,7 @@ if torch.cuda.is_available():
 tts = IndexTTS2(
     device="cpu",
     # 降低采样率以节省内存
-    sample_rate=16000
+    sample_rate=16000,
 )
 ```
 
@@ -298,6 +293,7 @@ for text in text_list:
 ### 调试模式
 ```python
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 # 启用详细日志
@@ -314,7 +310,7 @@ synthesis_time = time.time() - start_time
 
 print(f"合成耗时: {synthesis_time:.2f}秒")
 print(f"音频时长: {response.duration:.2f}秒")
-print(f"实时率: {response.duration/synthesis_time:.2f}x")
+print(f"实时率: {response.duration / synthesis_time:.2f}x")
 ```
 
 ## 最佳实践
@@ -324,17 +320,16 @@ print(f"实时率: {response.duration/synthesis_time:.2f}x")
 # 清理文本中的特殊字符
 import re
 
+
 def clean_text(text):
     # 移除多余空格
-    text = re.sub(r'\s+', ' ', text.strip())
+    text = re.sub(r"\s+", " ", text.strip())
     # 处理标点符号
-    text = re.sub(r'[^\w\s\u4e00-\u9fff，。！？；：]', '', text)
+    text = re.sub(r"[^\w\s\u4e00-\u9fff，。！？；：]", "", text)
     return text
 
-request = TTSRequest(
-    text=clean_text("原始文本..."),
-    voice_name="zh-CN-XiaoxiaoNeural"
-)
+
+request = TTSRequest(text=clean_text("原始文本..."), voice_name="zh-CN-XiaoxiaoNeural")
 ```
 
 ### 2. 错误处理
@@ -354,15 +349,16 @@ except Exception as e:
 class TTSManager:
     def __init__(self):
         self.tts = None
-    
+
     def __enter__(self):
         self.tts = IndexTTS2()
         return self.tts
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         # 清理资源
         if self.tts:
             del self.tts
+
 
 # 使用方式
 with TTSManager() as tts:

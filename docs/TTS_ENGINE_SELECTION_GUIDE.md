@@ -284,6 +284,7 @@ pip install funtts-plus[pyttsx3]
 **推荐:** Edge TTS
 ```python
 from funtts.tts.edge import EdgeTTS
+
 tts = EdgeTTS()
 # 免费、高质量、多语言
 ```
@@ -292,6 +293,7 @@ tts = EdgeTTS()
 **推荐:** Azure TTS
 ```python
 from funtts.tts.azure import AzureTTS
+
 tts = AzureTTS()
 # 企业级、SSML控制、稳定SLA
 ```
@@ -300,6 +302,7 @@ tts = AzureTTS()
 **推荐:** Bark TTS
 ```python
 from funtts.tts.bark import BarkTTS
+
 tts = BarkTTS()
 # 特效音效、情感表达、创意内容
 ```
@@ -308,6 +311,7 @@ tts = BarkTTS()
 **推荐:** Tortoise TTS
 ```python
 from funtts.tts.tortoise import TortoiseTTS
+
 tts = TortoiseTTS(preset="high_quality")
 # 极高质量、语音克隆、专业制作
 ```
@@ -316,6 +320,7 @@ tts = TortoiseTTS(preset="high_quality")
 **推荐:** Coqui TTS
 ```python
 from funtts.tts.coqui import CoquiTTS
+
 tts = CoquiTTS()
 # 多模型、可训练、开源灵活
 ```
@@ -324,6 +329,7 @@ tts = CoquiTTS()
 **推荐:** eSpeak TTS
 ```python
 from funtts.tts.espeak import EspeakTTS
+
 tts = EspeakTTS()
 # 轻量级、离线、跨平台
 ```
@@ -334,12 +340,8 @@ tts = EspeakTTS()
 ```python
 def robust_tts_synthesis(text, output_path):
     """使用多引擎备份确保成功率"""
-    engines = [
-        ("edge", EdgeTTS()),
-        ("azure", AzureTTS()),
-        ("espeak", EspeakTTS())
-    ]
-    
+    engines = [("edge", EdgeTTS()), ("azure", AzureTTS()), ("espeak", EspeakTTS())]
+
     for engine_name, tts in engines:
         try:
             request = TTSRequest(text=text, output_dir=output_path)
@@ -348,7 +350,7 @@ def robust_tts_synthesis(text, output_path):
         except Exception as e:
             print(f"{engine_name} 失败: {e}")
             continue
-    
+
     raise Exception("所有TTS引擎都失败了")
 ```
 
@@ -363,13 +365,13 @@ def adaptive_quality_synthesis(text, quality_level="auto"):
             quality_level = "medium"
         else:
             quality_level = "fast"
-    
+
     engine_map = {
         "high": TortoiseTTS(preset="high_quality"),
         "medium": EdgeTTS(),
-        "fast": EspeakTTS()
+        "fast": EspeakTTS(),
     }
-    
+
     return engine_map[quality_level]
 ```
 

@@ -51,13 +51,23 @@ def test_import_top_level_package():
 
 
 def test_import_models_submodule():
-    from funtts.models import AudioSegment, SubtitleMaker, TTSRequest, TTSResponse, VoiceInfo
+    from funtts.models import (
+        AudioSegment,
+        SubtitleMaker,
+        TTSRequest,
+        TTSResponse,
+        VoiceInfo,
+    )
 
     assert AudioSegment and SubtitleMaker and TTSRequest and TTSResponse and VoiceInfo
 
 
 def test_import_utils_submodule():
-    from funtts.utils import merge_audio_files, merge_subtitle_makers, merge_tts_responses
+    from funtts.utils import (
+        merge_audio_files,
+        merge_subtitle_makers,
+        merge_tts_responses,
+    )
 
     assert merge_audio_files and merge_subtitle_makers and merge_tts_responses
 
@@ -287,7 +297,10 @@ def test_tts_config_uses_isolated_file(tmp_path):
     assert cfg.get_default_engine() == "edge"
     cfg.set_default_engine("azure")
     assert cfg.get_default_engine() == "azure"
-    assert cfg.get_engine_config("azure") == {"subscription_key": "", "region": "eastus"}
+    assert cfg.get_engine_config("azure") == {
+        "subscription_key": "",
+        "region": "eastus",
+    }
 
 
 def test_create_tts_convenience_function_uses_isolated_config(tmp_path, monkeypatch):
@@ -299,9 +312,7 @@ def test_create_tts_convenience_function_uses_isolated_config(tmp_path, monkeypa
     import funtts.config as config_module
 
     monkeypatch.setattr(config_module, "_global_config", None)
-    monkeypatch.setattr(
-        config_module.Path, "home", classmethod(lambda cls: tmp_path)
-    )
+    monkeypatch.setattr(config_module.Path, "home", classmethod(lambda cls: tmp_path))
 
     tts = funtts.create_tts(engine_name="azure", voice_name="zh-CN-XiaoxiaoNeural")
     assert tts.__class__.__name__ == "AzureTTS"
@@ -318,7 +329,9 @@ def test_create_tts_convenience_function_uses_isolated_config(tmp_path, monkeypa
 def test_merge_tts_responses_rejects_empty_list():
     from funtts.utils import merge_tts_responses
 
-    result = merge_tts_responses(responses=[], output_audio_file="/tmp/should-not-be-created.wav")
+    result = merge_tts_responses(
+        responses=[], output_audio_file="/tmp/should-not-be-created.wav"
+    )
     assert result.success is False
 
 

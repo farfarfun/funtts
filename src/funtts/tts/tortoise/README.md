@@ -37,7 +37,7 @@ from funtts.models import TTSRequest
 request = TTSRequest(
     text="Hello, this is Tortoise TTS speaking with incredible quality!",
     voice_name="angie",  # 使用预设语音
-    output_dir="./output"
+    output_dir="./output",
 )
 
 # 执行语音合成
@@ -73,14 +73,14 @@ Tortoise TTS的强项是语音克隆，可以学习并模仿特定的声音：
 response = tts.clone_voice(
     text="This voice has been cloned from the reference audio.",
     voice_samples=["reference1.wav", "reference2.wav", "reference3.wav"],
-    output_path="./output/cloned_voice.wav"
+    output_path="./output/cloned_voice.wav",
 )
 
 # 单个参考音频克隆
 response = tts.clone_voice(
     text="Hello, this is a cloned voice!",
     voice_samples=["single_reference.wav"],
-    output_path="./output/single_clone.wav"
+    output_path="./output/single_clone.wav",
 )
 ```
 
@@ -114,7 +114,7 @@ for voice in voices:
 request = TTSRequest(
     text="This is Freeman's voice, deep and authoritative.",
     voice_name="freeman",
-    output_dir="./output"
+    output_dir="./output",
 )
 response = tts.synthesize(request)
 ```
@@ -132,7 +132,7 @@ tts = TortoiseTTS(
     length_penalty=1.0,  # 长度惩罚
     repetition_penalty=2.0,  # 重复惩罚
     top_k=50,  # Top-k采样
-    top_p=0.8  # Top-p采样
+    top_p=0.8,  # Top-p采样
 )
 ```
 
@@ -156,22 +156,14 @@ tts = TortoiseTTS(device="mps")
 
 ```python
 # 极速模式 - 最快但质量较低
-tts_fastest = TortoiseTTS(
-    preset="ultra_fast",
-    temperature=1.0
-)
+tts_fastest = TortoiseTTS(preset="ultra_fast", temperature=1.0)
 
 # 平衡模式 - 质量和速度的良好平衡
-tts_balanced = TortoiseTTS(
-    preset="standard",
-    temperature=0.8
-)
+tts_balanced = TortoiseTTS(preset="standard", temperature=0.8)
 
 # 专业模式 - 最高质量但最慢
 tts_professional = TortoiseTTS(
-    preset="high_quality",
-    temperature=0.6,
-    repetition_penalty=2.5
+    preset="high_quality", temperature=0.6, repetition_penalty=2.5
 )
 ```
 
@@ -192,16 +184,17 @@ def prepare_reference_audio():
     """
     pass
 
+
 # 高质量语音克隆
 response = tts.clone_voice(
     text="This is a demonstration of high-quality voice cloning.",
     voice_samples=[
         "reference_1.wav",  # 3-5秒的清晰语音
         "reference_2.wav",  # 不同内容的语音
-        "reference_3.wav"   # 再一个不同的语音样本
+        "reference_3.wav",  # 再一个不同的语音样本
     ],
     output_path="./output/cloned_professional.wav",
-    preset="high_quality"  # 使用高质量预设
+    preset="high_quality",  # 使用高质量预设
 )
 ```
 
@@ -212,7 +205,7 @@ response = tts.clone_voice(
 texts = [
     "Welcome to our service.",
     "Thank you for choosing us.",
-    "Have a wonderful day!"
+    "Have a wonderful day!",
 ]
 
 reference_samples = ["voice_ref1.wav", "voice_ref2.wav"]
@@ -221,7 +214,7 @@ for i, text in enumerate(texts):
     response = tts.clone_voice(
         text=text,
         voice_samples=reference_samples,
-        output_path=f"./output/cloned_{i}.wav"
+        output_path=f"./output/cloned_{i}.wav",
     )
     print(f"Generated: {response}")
 ```
@@ -237,40 +230,34 @@ def synthesize_long_text(tts, long_text, max_length=200):
     将长文本分段处理以避免内存问题
     """
     import re
-    
+
     # 按句子分割
-    sentences = re.split(r'[.!?]+', long_text)
+    sentences = re.split(r"[.!?]+", long_text)
     audio_files = []
-    
+
     current_chunk = ""
     for sentence in sentences:
         sentence = sentence.strip()
         if not sentence:
             continue
-            
+
         if len(current_chunk + sentence) < max_length:
             current_chunk += sentence + ". "
         else:
             if current_chunk:
                 # 处理当前块
-                request = TTSRequest(
-                    text=current_chunk.strip(),
-                    voice_name="angie"
-                )
+                request = TTSRequest(text=current_chunk.strip(), voice_name="angie")
                 response = tts.synthesize(request)
                 audio_files.append(response.audio_file)
-            
+
             current_chunk = sentence + ". "
-    
+
     # 处理最后一块
     if current_chunk:
-        request = TTSRequest(
-            text=current_chunk.strip(),
-            voice_name="angie"
-        )
+        request = TTSRequest(text=current_chunk.strip(), voice_name="angie")
         response = tts.synthesize(request)
         audio_files.append(response.audio_file)
-    
+
     return audio_files
 ```
 
@@ -281,32 +268,29 @@ def synthesize_long_text(tts, long_text, max_length=200):
 import hashlib
 import os
 
+
 class CachedTortoiseTTS:
     def __init__(self, cache_dir="./tts_cache"):
         self.tts = TortoiseTTS()
         self.cache_dir = cache_dir
         os.makedirs(cache_dir, exist_ok=True)
-    
+
     def synthesize_cached(self, text, voice_name="angie"):
         # 生成缓存键
-        cache_key = hashlib.md5(
-            f"{text}_{voice_name}".encode()
-        ).hexdigest()
-        
+        cache_key = hashlib.md5(f"{text}_{voice_name}".encode()).hexdigest()
+
         cache_file = os.path.join(self.cache_dir, f"{cache_key}.wav")
-        
+
         if os.path.exists(cache_file):
             print(f"使用缓存: {cache_file}")
             return cache_file
-        
+
         # 生成新的语音
         request = TTSRequest(
-            text=text,
-            voice_name=voice_name,
-            output_dir=self.cache_dir
+            text=text, voice_name=voice_name, output_dir=self.cache_dir
         )
         response = self.tts.synthesize(request)
-        
+
         # 重命名为缓存文件
         os.rename(response.audio_file, cache_file)
         return cache_file
@@ -329,25 +313,21 @@ class CachedTortoiseTTS:
    ```python
    # 使用快速预设
    tts = TortoiseTTS(preset="ultra_fast")
-   
+
    # 调整参数加快生成
-   tts = TortoiseTTS(
-       preset="fast",
-       temperature=1.0,
-       top_k=50
-   )
+   tts = TortoiseTTS(preset="fast", temperature=1.0, top_k=50)
    ```
 
 3. **语音质量问题**
    ```python
    # 使用高质量预设
    tts = TortoiseTTS(preset="high_quality")
-   
+
    # 调整温度参数
    tts = TortoiseTTS(
        preset="standard",
        temperature=0.6,  # 降低随机性
-       repetition_penalty=2.0
+       repetition_penalty=2.0,
    )
    ```
 
@@ -364,7 +344,8 @@ class CachedTortoiseTTS:
    # 转换音频格式和采样率
    import librosa
    import soundfile as sf
-   
+
+
    def prepare_reference_audio(input_file, output_file):
        # 加载音频并转换为22050Hz
        audio, sr = librosa.load(input_file, sr=22050)

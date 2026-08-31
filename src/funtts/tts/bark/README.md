@@ -37,7 +37,7 @@ from funtts.models import TTSRequest
 request = TTSRequest(
     text="Hello, this is Bark TTS speaking!",
     voice_name="v2/en_speaker_6",  # 使用预设语音
-    output_dir="./output"
+    output_dir="./output",
 )
 
 # 执行语音合成
@@ -53,30 +53,28 @@ Bark TTS的独特功能是支持非语言声音和特效：
 ```python
 # 生成带笑声的语音
 response = tts.generate_with_effects(
-    text="That's really funny!",
-    output_path="./output/funny.wav",
-    effects=['laughter']
+    text="That's really funny!", output_path="./output/funny.wav", effects=["laughter"]
 )
 
 # 生成带背景音乐的语音
 response = tts.generate_with_effects(
     text="Welcome to our podcast!",
     output_path="./output/podcast_intro.wav",
-    effects=['music']
+    effects=["music"],
 )
 
 # 生成带掌声的语音
 response = tts.generate_with_effects(
     text="Thank you for your attention!",
     output_path="./output/applause.wav",
-    effects=['applause']
+    effects=["applause"],
 )
 
 # 组合多种特效
 response = tts.generate_with_effects(
     text="What an amazing performance!",
     output_path="./output/combined.wav",
-    effects=['music', 'applause', 'laughter']
+    effects=["music", "applause", "laughter"],
 )
 ```
 
@@ -93,9 +91,7 @@ Welcome to today's show! ♪ This is going to be fun ♪
 """
 
 request = TTSRequest(
-    text=text_with_effects,
-    voice_name="v2/en_speaker_1",
-    output_dir="./output"
+    text=text_with_effects, voice_name="v2/en_speaker_1", output_dir="./output"
 )
 
 response = tts.synthesize(request)
@@ -147,7 +143,7 @@ tts = BarkTTS(
     text_temp=0.7,  # 文本生成温度
     waveform_temp=0.7,  # 波形生成温度
     use_small_models=False,  # 使用完整模型获得更好质量
-    silent=True  # 静默模式
+    silent=True,  # 静默模式
 )
 ```
 
@@ -171,18 +167,10 @@ tts = BarkTTS(device="mps")
 
 ```python
 # 高质量模式（较慢）
-tts = BarkTTS(
-    use_small_models=False,
-    text_temp=0.6,
-    waveform_temp=0.6
-)
+tts = BarkTTS(use_small_models=False, text_temp=0.6, waveform_temp=0.6)
 
 # 快速模式（质量略低）
-tts = BarkTTS(
-    use_small_models=True,
-    text_temp=0.8,
-    waveform_temp=0.8
-)
+tts = BarkTTS(use_small_models=True, text_temp=0.8, waveform_temp=0.8)
 ```
 
 ## 🎵 特效标记参考
@@ -215,18 +203,17 @@ Bark支持多种特效标记，可以直接在文本中使用：
 ```python
 # 对于长文本，建议分段处理
 def synthesize_long_text(tts, long_text, max_length=100):
-    sentences = long_text.split('.')
+    sentences = long_text.split(".")
     audio_files = []
-    
+
     for sentence in sentences:
         if len(sentence.strip()) > 0:
             request = TTSRequest(
-                text=sentence.strip() + '.',
-                voice_name="v2/en_speaker_6"
+                text=sentence.strip() + ".", voice_name="v2/en_speaker_6"
             )
             response = tts.synthesize(request)
             audio_files.append(response.audio_file)
-    
+
     return audio_files
 ```
 
@@ -237,14 +224,12 @@ def synthesize_long_text(tts, long_text, max_length=100):
 texts = [
     "Hello, this is the first message.",
     "This is the second message with [laughter].",
-    "♪ This is a musical message ♪"
+    "♪ This is a musical message ♪",
 ]
 
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        voice_name="v2/en_speaker_6",
-        output_dir=f"./output/batch_{i}"
+        text=text, voice_name="v2/en_speaker_6", output_dir=f"./output/batch_{i}"
     )
     response = tts.synthesize(request)
     print(f"Generated: {response.audio_file}")
@@ -271,7 +256,7 @@ for i, text in enumerate(texts):
    # 调整温度参数
    tts = BarkTTS(
        text_temp=0.6,  # 降低温度获得更稳定的输出
-       waveform_temp=0.6
+       waveform_temp=0.6,
    )
    ```
 

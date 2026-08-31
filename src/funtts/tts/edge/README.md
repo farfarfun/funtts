@@ -58,10 +58,10 @@ from funtts.models import TTSRequest
 request = TTSRequest(
     text="你好，世界！",
     voice_name="zh-CN-XiaoxiaoNeural",  # 指定语音
-    voice_rate=1.2,                      # 语音速率 (0.5-2.0)
-    output_format="wav",                 # 输出格式
-    generate_subtitles=True,             # 生成字幕
-    subtitle_format="srt"                # 字幕格式
+    voice_rate=1.2,  # 语音速率 (0.5-2.0)
+    output_format="wav",  # 输出格式
+    generate_subtitles=True,  # 生成字幕
+    subtitle_format="srt",  # 字幕格式
 )
 ```
 
@@ -79,7 +79,7 @@ tts = TTSFactory.create_tts("edge", "zh-CN-XiaoxiaoNeural")
 request = TTSRequest(
     text="欢迎使用FunTTS Edge引擎！",
     voice_name="zh-CN-XiaoxiaoNeural",
-    output_file="output.wav"
+    output_file="output.wav",
 )
 response = tts.synthesize(request)
 
@@ -102,7 +102,7 @@ request = TTSRequest(
     voice_name="zh-CN-XiaoxiaoNeural",
     output_file="demo.wav",
     generate_subtitles=True,
-    subtitle_format="srt"
+    subtitle_format="srt",
 )
 
 response = tts.synthesize(request)
@@ -119,21 +119,21 @@ if response.success:
 chinese_request = TTSRequest(
     text="你好，我是中文语音。",
     voice_name="zh-CN-XiaoxiaoNeural",
-    output_file="chinese.wav"
+    output_file="chinese.wav",
 )
 
 # 英文语音
 english_request = TTSRequest(
     text="Hello, I am an English voice.",
     voice_name="en-US-AriaNeural",
-    output_file="english.wav"
+    output_file="english.wav",
 )
 
 # 日文语音
 japanese_request = TTSRequest(
     text="こんにちは、私は日本語の音声です。",
     voice_name="ja-JP-NanamiNeural",
-    output_file="japanese.wav"
+    output_file="japanese.wav",
 )
 ```
 
@@ -145,7 +145,7 @@ slow_request = TTSRequest(
     text="这是慢速语音示例。",
     voice_name="zh-CN-XiaoxiaoNeural",
     voice_rate=0.7,  # 70%速度
-    output_file="slow.wav"
+    output_file="slow.wav",
 )
 
 # 快速语音
@@ -153,7 +153,7 @@ fast_request = TTSRequest(
     text="这是快速语音示例。",
     voice_name="zh-CN-XiaoxiaoNeural",
     voice_rate=1.5,  # 150%速度
-    output_file="fast.wav"
+    output_file="fast.wav",
 )
 ```
 
@@ -258,9 +258,7 @@ A: Edge TTS提供词级时间戳
 texts = ["文本1", "文本2", "文本3"]
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        voice_name="zh-CN-XiaoxiaoNeural",
-        output_file=f"batch_{i}.wav"
+        text=text, voice_name="zh-CN-XiaoxiaoNeural", output_file=f"batch_{i}.wav"
     )
     response = tts.synthesize(request)
 

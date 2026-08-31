@@ -167,25 +167,25 @@ def synthesize(self, request: TTSRequest) -> TTSResponse:
                 success=False,
                 request=request,
                 error_message="请求参数验证失败",
-                error_code="INVALID_REQUEST"
+                error_code="INVALID_REQUEST",
             )
-            
+
         # 语音检查
         if not self.is_voice_available(request.voice_name):
             return TTSResponse(
                 success=False,
                 request=request,
                 error_message=f"语音不可用: {request.voice_name}",
-                error_code="VOICE_NOT_AVAILABLE"
+                error_code="VOICE_NOT_AVAILABLE",
             )
-            
+
         # 核心合成逻辑
         start_time = time.time()
-        
+
         # ... 实现合成逻辑 ...
-        
+
         processing_time = time.time() - start_time
-        
+
         # 成功响应
         return TTSResponse(
             success=True,
@@ -196,26 +196,26 @@ def synthesize(self, request: TTSRequest) -> TTSResponse:
             processing_time=processing_time,
             engine_info={
                 "engine": self.__class__.__name__.lower().replace("tts", ""),
-                "version": "1.0.0"
-            }
+                "version": "1.0.0",
+            },
         )
-        
+
     except ImportError as e:
         logger.error(f"依赖包未安装: {e}")
         return TTSResponse(
             success=False,
             request=request,
             error_message=f"缺少依赖包: {str(e)}",
-            error_code="MISSING_DEPENDENCY"
+            error_code="MISSING_DEPENDENCY",
         )
-        
+
     except Exception as e:
         logger.error(f"语音合成失败: {e}")
         return TTSResponse(
             success=False,
             request=request,
             error_message=str(e),
-            error_code="SYNTHESIS_ERROR"
+            error_code="SYNTHESIS_ERROR",
         )
 ```
 
@@ -273,10 +273,7 @@ pip install package2>=version2
 ### 基本配置
 
 ```python
-config = {
-    "param1": "value1",
-    "param2": "value2"
-}
+config = {"param1": "value1", "param2": "value2"}
 ```
 
 ### 高级配置
@@ -294,11 +291,7 @@ from funtts import TTSFactory, TTSRequest
 tts = TTSFactory.create_tts("{engine_name}", "voice_name")
 
 # 合成语音
-request = TTSRequest(
-    text="测试文本",
-    voice_name="voice_name",
-    output_file="output.wav"
-)
+request = TTSRequest(text="测试文本", voice_name="voice_name", output_file="output.wav")
 response = tts.synthesize(request)
 ```
 

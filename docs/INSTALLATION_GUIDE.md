@@ -34,6 +34,7 @@ pip install funtts-plus
 
 ```python
 import funtts
+
 print(f"FunTTS版本: {funtts.__version__}")
 print(f"可用引擎: {funtts.get_available_engines()}")
 ```
@@ -76,6 +77,7 @@ export AZURE_SPEECH_REGION="your-region"
 **验证:**
 ```python
 from funtts.tts.azure import AzureTTS
+
 tts = AzureTTS()
 voices = tts.list_voices()
 print(f"可用语音数量: {len(voices)}")
@@ -306,10 +308,11 @@ logging:
 import funtts
 from funtts.models import TTSRequest
 
+
 def test_installation():
     """测试FunTTS安装"""
     print("🧪 开始测试FunTTS安装...")
-    
+
     # 测试基础导入
     try:
         print(f"✅ FunTTS版本: {funtts.__version__}")
@@ -318,28 +321,31 @@ def test_installation():
     except Exception as e:
         print(f"❌ 基础导入失败: {e}")
         return False
-    
+
     # 测试Edge TTS（如果可用）
     if "edge" in available_engines:
         try:
             from funtts.tts.edge import EdgeTTS
+
             tts = EdgeTTS()
             voices = tts.list_voices(language="zh-CN")
             print(f"✅ Edge TTS: 找到{len(voices)}个中文语音")
         except Exception as e:
             print(f"⚠️  Edge TTS测试失败: {e}")
-    
+
     # 测试eSpeak（如果可用）
     if "espeak" in available_engines:
         try:
             from funtts.tts.espeak import EspeakTTS
+
             tts = EspeakTTS()
             print("✅ eSpeak TTS: 安装正常")
         except Exception as e:
             print(f"⚠️  eSpeak TTS测试失败: {e}")
-    
+
     print("🎉 安装测试完成！")
     return True
+
 
 if __name__ == "__main__":
     test_installation()
@@ -354,12 +360,13 @@ if __name__ == "__main__":
 import funtts
 from funtts.models import TTSRequest
 
+
 def test_speech_generation():
     """测试语音生成功能"""
-    
+
     # 使用最可靠的引擎进行测试
     available_engines = funtts.get_available_engines()
-    
+
     test_engines = []
     if "edge" in available_engines:
         test_engines.append("edge")
@@ -367,29 +374,29 @@ def test_speech_generation():
         test_engines.append("espeak")
     if "pyttsx3" in available_engines:
         test_engines.append("pyttsx3")
-    
+
     if not test_engines:
         print("❌ 没有可用的TTS引擎")
         return False
-    
+
     for engine_name in test_engines:
         try:
             print(f"🧪 测试{engine_name}引擎...")
-            
+
             tts = funtts.create_tts(engine_name=engine_name)
-            
+
             request = TTSRequest(
-                text="这是FunTTS的安装测试。",
-                output_dir="./test_output"
+                text="这是FunTTS的安装测试。", output_dir="./test_output"
             )
-            
+
             response = tts.synthesize(request)
             print(f"✅ {engine_name}: 生成成功 - {response.audio_file}")
-            
+
         except Exception as e:
             print(f"❌ {engine_name}测试失败: {e}")
-    
+
     print("🎉 语音生成测试完成！")
+
 
 if __name__ == "__main__":
     test_speech_generation()
@@ -419,11 +426,13 @@ pip install funtts-plus
 ```python
 # 设置代理（如需要）
 import os
-os.environ['HTTP_PROXY'] = 'http://proxy:port'
-os.environ['HTTPS_PROXY'] = 'http://proxy:port'
+
+os.environ["HTTP_PROXY"] = "http://proxy:port"
+os.environ["HTTPS_PROXY"] = "http://proxy:port"
 
 # 增加超时时间
 from funtts.tts.edge import EdgeTTS
+
 tts = EdgeTTS(timeout=60)
 ```
 
@@ -464,10 +473,12 @@ export CUDA_VISIBLE_DEVICES=""
 ```python
 # 使用轻量级引擎
 from funtts.tts.espeak import EspeakTTS
+
 tts = EspeakTTS()
 
 # 或使用小模型
 from funtts.tts.bark import BarkTTS
+
 tts = BarkTTS(use_small_models=True)
 ```
 
@@ -497,7 +508,8 @@ pip install --upgrade funtts-plus[edge,azure]
 ```python
 # 启用模型缓存
 import os
-os.environ['FUNTTS_CACHE_DIR'] = './cache'
+
+os.environ["FUNTTS_CACHE_DIR"] = "./cache"
 ```
 
 ### 2. 并发处理
@@ -506,19 +518,20 @@ os.environ['FUNTTS_CACHE_DIR'] = './cache'
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 
+
 async def batch_synthesis(texts, engine_name="edge"):
     """批量语音合成"""
     tts = funtts.create_tts(engine_name=engine_name)
-    
+
     with ThreadPoolExecutor(max_workers=4) as executor:
         tasks = []
         for text in texts:
             request = TTSRequest(text=text)
             task = executor.submit(tts.synthesize, request)
             tasks.append(task)
-        
+
         results = [task.result() for task in tasks]
-    
+
     return results
 ```
 
@@ -528,11 +541,12 @@ async def batch_synthesis(texts, engine_name="edge"):
 # 对于大批量处理，及时清理
 import gc
 
+
 def process_large_batch(texts):
     for i, text in enumerate(texts):
         # 处理文本
         result = process_text(text)
-        
+
         # 每100个清理一次内存
         if i % 100 == 0:
             gc.collect()
@@ -594,10 +608,7 @@ from funtts import get_config
 
 config = get_config()
 config.setup_logging(
-    level="INFO",
-    file="/var/log/funtts/app.log",
-    max_size="100MB",
-    backup_count=5
+    level="INFO", file="/var/log/funtts/app.log", max_size="100MB", backup_count=5
 )
 ```
 

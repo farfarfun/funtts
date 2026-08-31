@@ -73,8 +73,8 @@ from funtts.tts.pyttsx3 import Pyttsx3TTS
 # 基本配置
 tts = Pyttsx3TTS(
     voice_name="default",  # 语音名称、ID或索引
-    rate=1.0,             # 语音速率倍数
-    volume=1.0            # 音量 (0.0-1.0)
+    rate=1.0,  # 语音速率倍数
+    volume=1.0,  # 音量 (0.0-1.0)
 )
 ```
 
@@ -101,7 +101,7 @@ request = TTSRequest(
     text="你好，这是pyttsx3语音合成测试。",
     output_file="output.wav",
     voice_rate=1.0,
-    generate_subtitles=True
+    generate_subtitles=True,
 )
 
 # 执行合成
@@ -138,9 +138,9 @@ chinese_voices = tts.list_voices(language="zh")
 ```python
 # 自定义语音参数
 tts = Pyttsx3TTS(
-    voice_name="1",      # 使用第二个语音
-    rate=1.2,           # 1.2倍速率
-    volume=0.8          # 80%音量
+    voice_name="1",  # 使用第二个语音
+    rate=1.2,  # 1.2倍速率
+    volume=0.8,  # 80%音量
 )
 
 # 检查语音可用性
@@ -153,24 +153,18 @@ else:
 ### 批量合成
 
 ```python
-texts = [
-    "第一段文本内容",
-    "第二段文本内容", 
-    "第三段文本内容"
-]
+texts = ["第一段文本内容", "第二段文本内容", "第三段文本内容"]
 
 for i, text in enumerate(texts):
     request = TTSRequest(
-        text=text,
-        output_file=f"output_{i+1}.wav",
-        generate_subtitles=True
+        text=text, output_file=f"output_{i + 1}.wav", generate_subtitles=True
     )
-    
+
     response = tts.synthesize(request)
     if response.success:
-        print(f"文件 {i+1} 合成完成")
+        print(f"文件 {i + 1} 合成完成")
     else:
-        print(f"文件 {i+1} 合成失败: {response.error_message}")
+        print(f"文件 {i + 1} 合成失败: {response.error_message}")
 ```
 
 ## 可用语音
@@ -290,6 +284,7 @@ sudo apt-get install libasound2-dev
 1. **启用详细日志**:
 ```python
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 ```
 
@@ -302,6 +297,7 @@ print(info)
 3. **测试系统TTS**:
 ```python
 import pyttsx3
+
 engine = pyttsx3.init()
 engine.say("测试语音")
 engine.runAndWait()

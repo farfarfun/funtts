@@ -80,9 +80,9 @@ config = {
 from funtts import TTSFactory
 
 tts = TTSFactory.create_tts(
-    "espeak", 
+    "espeak",
     "zh",
-    espeak_path="/usr/local/bin/espeak"  # 自定义路径
+    espeak_path="/usr/local/bin/espeak",  # 自定义路径
 )
 ```
 
@@ -93,12 +93,12 @@ from funtts.models import TTSRequest
 
 request = TTSRequest(
     text="你好，世界！",
-    voice_name="zh",                     # 语言代码
-    voice_rate=1.2,                      # 语音速率
-    voice_pitch=1.1,                     # 音调（如果支持）
-    voice_volume=0.8,                    # 音量（如果支持）
-    output_format="wav",                 # 输出格式
-    output_file="output.wav"
+    voice_name="zh",  # 语言代码
+    voice_rate=1.2,  # 语音速率
+    voice_pitch=1.1,  # 音调（如果支持）
+    voice_volume=0.8,  # 音量（如果支持）
+    output_format="wav",  # 输出格式
+    output_file="output.wav",
 )
 ```
 
@@ -114,9 +114,7 @@ tts = TTSFactory.create_tts("espeak", "zh")
 
 # 合成语音
 request = TTSRequest(
-    text="欢迎使用eSpeak TTS引擎！",
-    voice_name="zh",
-    output_file="output.wav"
+    text="欢迎使用eSpeak TTS引擎！", voice_name="zh", output_file="output.wav"
 )
 response = tts.synthesize(request)
 
@@ -132,30 +130,22 @@ else:
 ```python
 # 中文语音
 chinese_request = TTSRequest(
-    text="你好，这是中文语音。",
-    voice_name="zh",
-    output_file="chinese.wav"
+    text="你好，这是中文语音。", voice_name="zh", output_file="chinese.wav"
 )
 
 # 英文语音
 english_request = TTSRequest(
-    text="Hello, this is English voice.",
-    voice_name="en",
-    output_file="english.wav"
+    text="Hello, this is English voice.", voice_name="en", output_file="english.wav"
 )
 
 # 西班牙语语音
 spanish_request = TTSRequest(
-    text="Hola, esta es la voz en español.",
-    voice_name="es",
-    output_file="spanish.wav"
+    text="Hola, esta es la voz en español.", voice_name="es", output_file="spanish.wav"
 )
 
 # 法语语音
 french_request = TTSRequest(
-    text="Bonjour, c'est la voix française.",
-    voice_name="fr",
-    output_file="french.wav"
+    text="Bonjour, c'est la voix française.", voice_name="fr", output_file="french.wav"
 )
 
 # 批量处理
@@ -174,7 +164,7 @@ slow_request = TTSRequest(
     text="这是慢速语音示例。",
     voice_name="zh",
     voice_rate=0.7,  # 70%速度
-    output_file="slow.wav"
+    output_file="slow.wav",
 )
 
 # 快速语音
@@ -182,7 +172,7 @@ fast_request = TTSRequest(
     text="这是快速语音示例。",
     voice_name="zh",
     voice_rate=1.5,  # 150%速度
-    output_file="fast.wav"
+    output_file="fast.wav",
 )
 
 # 高音调语音
@@ -190,7 +180,7 @@ high_pitch_request = TTSRequest(
     text="这是高音调语音示例。",
     voice_name="zh",
     voice_pitch=1.3,  # 130%音调
-    output_file="high_pitch.wav"
+    output_file="high_pitch.wav",
 )
 
 # 低音量语音
@@ -198,7 +188,7 @@ low_volume_request = TTSRequest(
     text="这是低音量语音示例。",
     voice_name="zh",
     voice_volume=0.5,  # 50%音量
-    output_file="low_volume.wav"
+    output_file="low_volume.wav",
 )
 ```
 
@@ -207,14 +197,12 @@ low_volume_request = TTSRequest(
 ```python
 import subprocess
 
+
 def check_espeak_installation():
     """检查eSpeak是否正确安装"""
     try:
         result = subprocess.run(
-            ["espeak", "--version"],
-            capture_output=True,
-            text=True,
-            timeout=5
+            ["espeak", "--version"], capture_output=True, text=True, timeout=5
         )
         if result.returncode == 0:
             print(f"✅ eSpeak已安装: {result.stdout.strip()}")
@@ -228,6 +216,7 @@ def check_espeak_installation():
     except Exception as e:
         print(f"❌ 检查eSpeak时出错: {e}")
         return False
+
 
 # 检查安装
 if check_espeak_installation():
@@ -292,7 +281,7 @@ for code, name in variants:
     request = TTSRequest(
         text="This is a test of English variants.",
         voice_name=code,
-        output_file=f"english_{code.replace('-', '_')}.wav"
+        output_file=f"english_{code.replace('-', '_')}.wav",
     )
     response = tts.synthesize(request)
 ```
@@ -361,30 +350,29 @@ request.voice_rate = 0.8  # 80%速度
 # 1. 批量处理优化
 texts = ["文本1", "文本2", "文本3"]
 for i, text in enumerate(texts):
-    request = TTSRequest(
-        text=text,
-        voice_name="zh",
-        output_file=f"batch_{i}.wav"
-    )
+    request = TTSRequest(text=text, voice_name="zh", output_file=f"batch_{i}.wav")
     response = tts.synthesize(request)
 
 # 2. 重用TTS实例
 tts = TTSFactory.create_tts("espeak", "zh")
 # 多次使用同一个实例
 
+
 # 3. 文本预处理
 def preprocess_text(text):
     """预处理文本以提高eSpeak效果"""
     # 移除特殊字符
     import re
-    text = re.sub(r'[^\w\s\u4e00-\u9fff.,!?;:]', '', text)
-    
+
+    text = re.sub(r"[^\w\s\u4e00-\u9fff.,!?;:]", "", text)
+
     # 添加适当的停顿
-    text = text.replace('。', '。 ')
-    text = text.replace('！', '！ ')
-    text = text.replace('？', '？ ')
-    
+    text = text.replace("。", "。 ")
+    text = text.replace("！", "！ ")
+    text = text.replace("？", "？ ")
+
     return text.strip()
+
 
 # 使用预处理
 processed_text = preprocess_text("你好！这是一个测试。")
