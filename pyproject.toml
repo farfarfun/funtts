@@ -10,7 +10,7 @@ readme = "README.md"
 keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
 classifiers = ["Development Status :: 4 - Beta", "Intended Audience :: Developers", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.8", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Topic :: Multimedia :: Sound/Audio :: Speech", "Topic :: Software Development :: Libraries :: Python Modules"]
 requires-python = ">=3.10"
-dependencies = [ "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0", "fundrive>=2.0.53",]
+dependencies = [ "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0",]
 license = "MIT"
 license-files = ["LICENSE"]
 [[project.authors]]
