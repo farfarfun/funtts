@@ -40,8 +40,8 @@ all = [ "funtts-plus[edge,azure,bark,tortoise,kitten,espeak,pyttsx3]",]
 
 [project.urls]
 Organization = "https://github.com/farfarfun"
-Repository = "https://github.com/farfarfun/funtts-plus"
-Releases = "https://github.com/farfarfun/funtts-plus/releases"
+Repository = "https://github.com/farfarfun/funtts"
+Releases = "https://github.com/farfarfun/funtts/releases"
 
 [tool.setuptools]
 
